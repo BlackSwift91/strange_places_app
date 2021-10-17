@@ -3,4 +3,5 @@ export interface ILoginState {
   isSignout: boolean;
   userToken: null | string;
   error: null | string;
+  userData: 
 }

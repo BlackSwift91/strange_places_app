@@ -1,2 +1,4 @@
 export const TEST = 'TEST';
 export const SIGN_IN = 'SIGN_IN';
+export const USER_NAME_INPUT_CHANGE = 'USER_NAME_INPUT_CHANGE';
+export const USER_PASSWORD_INPUT_CHANGE = 'USER_PASSWORD_INPUT_CHANGE';
