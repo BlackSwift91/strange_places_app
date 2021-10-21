@@ -36,7 +36,9 @@ const theme = {
   },
 };
 
+
 const App = () => {
+  
   return (
     <StoreProvider store={store}>
       <PaperProvider theme={theme}>

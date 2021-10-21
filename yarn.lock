@@ -1510,14 +1510,19 @@
   resolved "https://registry.yarnpkg.com/@react-native-community/eslint-plugin/-/eslint-plugin-1.1.0.tgz#e42b1bef12d2415411519fd528e64b593b1363dc"
   integrity sha512-W/J0fNYVO01tioHjvYWQ9m6RgndVtbElzYozBq1ZPrHO/iCzlqoySHl4gO/fpCl9QEFjvJfjPgtPMTMlsoq5DQ==
 
-"@react-native-firebase/app@^12.9.1":
-  version "12.9.1"
-  resolved "https://registry.yarnpkg.com/@react-native-firebase/app/-/app-12.9.1.tgz#bfa0f2db4c6158d545dfee2e8b0684cea0742a7b"
-  integrity sha512-AXjEsjx6nJ+3UC5J5mg9uYzzRT0cuHjXvQ1t3aK72C2v/EBKADus8vhhiE33CB8wpFTe7cQmw6ygfK1KblNBaw==
+"@react-native-firebase/app@^12.9.2":
+  version "12.9.2"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/app/-/app-12.9.2.tgz#40d2eaf7c262abce56ae639d6ce1ea6e1a0e8639"
+  integrity sha512-aZ32taypvRGini7wynqbFTDppnFrBUsZAVcqB3ePY5tYi7DTTGK62UxIUGDuQ66BsHv7AULMOTj87RT1s37EHA==
   dependencies:
     "@expo/config-plugins" "^4.0.2"
     opencollective-postinstall "^2.0.1"
     superstruct "^0.6.2"
+
+"@react-native-firebase/firestore@^12.9.2":
+  version "12.9.2"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/firestore/-/firestore-12.9.2.tgz#dbc002985492165f7e1198d1ffb2de8006544478"
+  integrity sha512-Nk0rKUH9XB2qKsZpnc23jj58eLk5K8CH/g8L2zATvERWuHIC61DiJ4HHCoOJXoVE9uup82geerVubOt6LeCc0g==
 
 "@react-native-masked-view/masked-view@^0.2.6":
   version "0.2.6"
@@ -6880,6 +6885,11 @@ strip-json-comments@^3.1.0, strip-json-comments@^3.1.1:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/strip-json-comments/-/strip-json-comments-3.1.1.tgz#31f1281b3832630434831c310c01cccda8cbe006"
   integrity sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==
+
+stuffy-granny-lib@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/stuffy-granny-lib/-/stuffy-granny-lib-1.0.5.tgz#a96df62525ee9daed48e8ccaee0454698d321835"
+  integrity sha512-6OH8DQ2F9W7rVZrE1q6RowQNTJA65Qx6gZVPaV1dafv1acDHVBSOeFxNoTXi7EvlVfG8XBL3NkAF7SMTBqfOAA==
 
 sudo-prompt@^9.0.0:
   version "9.2.1"

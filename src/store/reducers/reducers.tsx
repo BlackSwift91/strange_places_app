@@ -18,8 +18,10 @@ const initialState: ILoginState = {
   error: null,
 };
 
-export const loginReducer = (state = initialState, action: LoginAction): ILoginState => {
-  console.log('Reducer Action', action.type);
+export const loginReducer = (
+  state = initialState,
+  action: LoginAction,
+): ILoginState => {
   switch (action.type) {
     case USER_NAME_INPUT_CHANGE:
       console.log('Change Input', action.payload);

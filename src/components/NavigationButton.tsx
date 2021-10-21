@@ -1,8 +1,7 @@
-import React from 'react'
+import React from 'react';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { HeaderButton } from 'react-navigation-header-buttons';
-
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export const NavigationButton = props => (
   <HeaderButton

@@ -10,7 +10,8 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
-    "@react-native-firebase/app": "^12.9.1",
+    "@react-native-firebase/app": "^12.9.2",
+    "@react-native-firebase/firestore": "^12.9.2",
     "@react-native-masked-view/masked-view": "^0.2.6",
     "@react-navigation/bottom-tabs": "^6.0.9",
     "@react-navigation/native": "^6.0.6",
@@ -24,7 +25,8 @@
     "react-native-vector-icons": "^8.1.0",
     "react-navigation-header-buttons": "^9.0.0",
     "react-redux": "^7.2.5",
-    "redux": "^4.1.1"
+    "redux": "^4.1.1",
+    "stuffy-granny-lib": "^1.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
