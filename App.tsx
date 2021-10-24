@@ -18,7 +18,6 @@ import { store } from './src/store';
 import { AppNavigator } from './src/navigation/AppNavigation';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 
-
 const MyTheme = {
   ...NavigationTheme,
   colors: {
@@ -36,9 +35,7 @@ const theme = {
   },
 };
 
-
 const App = () => {
-  
   return (
     <StoreProvider store={store}>
       <PaperProvider theme={theme}>

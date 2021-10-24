@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   ImageBackground,
   StatusBar,
@@ -14,7 +13,9 @@ import {
   TextStyle,
 } from 'react-native';
 import { useDispatch } from 'react-redux';
+import { StackNavigationProp } from '@react-navigation/stack';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import auth from '@react-native-firebase/auth';
 
 import { THEME } from '../theme';
 import { CustomButton } from '../components/CustomButton';
@@ -22,6 +23,10 @@ import {
   userNameChangeInput,
   userPasswordChangeInput,
 } from '../store/actions/actions';
+
+import { DB } from '../../sglib.config';
+
+import { AuthStackNavigatorParamsList } from '../interfaces/INavigation';
 
 interface IProps {
   screenContainer: ViewStyle;
@@ -40,15 +45,26 @@ interface ICustomButtonStyle {
   buttonTextStyle: TextStyle;
 }
 
+interface SignInScreenProps {
+  navigation: StackNavigationProp<AuthStackNavigatorParamsList, 'SignInScreen'>;
+}
 
-export const SignInScreen = ({ navigation }) => {
-  const changeInputBlur = useRef();
+export const SignInScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
+  const userNameInputRef = useRef<TextInput>(null);
+  const userPasswordInputRef = useRef<TextInput>(null);
   const dispatch = useDispatch();
   const [userName, setUserName] = useState<string>('');
   const [userPassword, setUserPassword] = useState<string>('');
   const [passwordVisible, setPasswordVisible] = useState<boolean>(true);
 
-    const test = () => {
+  useEffect(() => {
+    (async () => {
+      const result = await DB.users.getAllUsers();
+      console.log(result);
+    })();
+  }, []);
+
+  const test = () => {
     console.log('1111122');
   };
 
@@ -60,9 +76,31 @@ export const SignInScreen = ({ navigation }) => {
     dispatch(userPasswordChangeInput(userPassword));
   }, [dispatch, userPassword]);
 
-  function navToScreen() {
-    console.log('not navigate');
-  }
+  const navToSignUpScreen = async () => {
+    await Keyboard.dismiss();
+    navigation.navigate('SignUpScreen');
+  };
+
+  // useEffect(() => {
+  //   userNameInputRef.current?.focus();
+  // }, []);
+
+  // auth()
+  //   .createUserWithEmailAndPassword('jane.doe@example.com', 'SuperSecretPassword!')
+  //   .then(() => {
+  //     console.log('User account created & signed in!');
+  //   })
+  //   .catch(error => {
+  //     if (error.code === 'auth/email-already-in-use') {
+  //       console.log('That email address is already in use!');
+  //     }
+
+  //     if (error.code === 'auth/invalid-email') {
+  //       console.log('That email address is invalid!');
+  //     }
+
+  //     console.error(error);
+  //   });
 
   return (
     <View style={styles.screenContainer}>
@@ -88,6 +126,7 @@ export const SignInScreen = ({ navigation }) => {
               </View>
 
               <TextInput
+                ref={userNameInputRef}
                 returnKeyType="next"
                 maxLength={30}
                 autoCapitalize="none"
@@ -96,7 +135,7 @@ export const SignInScreen = ({ navigation }) => {
                 onChangeText={val => setUserName(val)}
                 value={userName}
                 onSubmitEditing={() => {
-                  changeInputBlur.current.focus();
+                  userPasswordInputRef.current?.focus();
                 }}
                 blurOnSubmit={false}
               />
@@ -119,7 +158,7 @@ export const SignInScreen = ({ navigation }) => {
                 style={styles.inputStyle}
                 onChangeText={val => setUserPassword(val)}
                 value={userPassword}
-                ref={changeInputBlur}
+                ref={userPasswordInputRef}
               />
               <TouchableOpacity
                 style={styles.inputIconContainer}
@@ -133,47 +172,30 @@ export const SignInScreen = ({ navigation }) => {
             </View>
           </View>
 
-
-
           <View style={signInButtonStyle.buttonContainerStyle}>
             <CustomButton
               buttonStyle={signInButtonStyle.buttonStyle}
               buttonTextStyle={signInButtonStyle.buttonTextStyle}
               buttonText={'Sign In'}
-              onPressButtonValue={'SignInScreen'}
               onPressHandler={test}
-              authButtonType={true}
             />
           </View>
-
-
-          <TouchableOpacity
-            onPress={async () => {
-              await Keyboard.dismiss();
-              navigation.navigate('SignUpScreen');
-            }}>
-            <Text
-              style={{
-                color: THEME.mainColor,
-                fontSize: 16,
-                lineHeight: 24,
-                paddingTop: 10,
-                textAlign: 'center',
-              }}>
-              Sign Up
-            </Text>
-          </TouchableOpacity>
-
-          <Text
-            style={{
-              color: THEME.mainColor,
-              fontSize: 16,
-              lineHeight: 24,
-              paddingTop: 5,
-              textAlign: 'center',
-            }}>
-            Restore password
-          </Text>
+          <View style={restorePasswordButtonStyle.buttonContainerStyle}>
+            <CustomButton
+              buttonStyle={restorePasswordButtonStyle.buttonStyle}
+              buttonTextStyle={restorePasswordButtonStyle.buttonTextStyle}
+              buttonText={'Restore password'}
+              onPressHandler={test}
+            />
+          </View>
+          <View style={signUpButtonStyle.buttonContainerStyle}>
+            <CustomButton
+              buttonStyle={signUpButtonStyle.buttonStyle}
+              buttonTextStyle={signUpButtonStyle.buttonTextStyle}
+              buttonText={'Sign Up'}
+              onPressHandler={navToSignUpScreen}
+            />
+          </View>
         </View>
       </ImageBackground>
     </View>
@@ -247,23 +269,48 @@ const signInButtonStyle = StyleSheet.create<ICustomButtonStyle>({
   },
 });
 
-// signUpButtonText: {
-//   color: '#0071bc',
-// },
+const signUpButtonStyle = StyleSheet.create<ICustomButtonStyle>({
+  buttonContainerStyle: {
+    paddingTop: 12,
+    width: 150,
+  },
+  buttonStyle: {
+    textAlign: 'center',
+    backgroundColor: THEME.whiteColor,
+    borderColor: 'white',
+    elevation: 0,
+    paddingHorizontal: 0,
+    paddingVertical: 0,
+    borderRadius: 0,
+    borderWidth: 0,
+  },
+  buttonTextStyle: {
+    color: THEME.mainColor,
+    fontSize: 15,
+    lineHeight: 24,
+    fontWeight: 'normal',
+  },
+});
 
-// signUpButtonStyle: {
-//   marginTop: 10,
-//   backgroundColor: '#ffffff',
-// },
-// signUpContainer: {
-//   width: '90%',
-// },
-
-// signUpButtonTextStyle: {
-//   color: THEME.mainColor,
-// },
-
-// signUpButtonStyle: {
-//   marginTop: 10,
-//   backgroundColor: THEME.whiteColor,
-// },
+const restorePasswordButtonStyle = StyleSheet.create<ICustomButtonStyle>({
+  buttonContainerStyle: {
+    paddingTop: 15,
+    width: 150,
+  },
+  buttonStyle: {
+    textAlign: 'center',
+    backgroundColor: THEME.whiteColor,
+    borderColor: 'white',
+    elevation: 0,
+    paddingHorizontal: 0,
+    paddingVertical: 0,
+    borderRadius: 0,
+    borderWidth: 0,
+  },
+  buttonTextStyle: {
+    color: THEME.mainColor,
+    fontSize: 15,
+    lineHeight: 24,
+    fontWeight: 'normal',
+  },
+});

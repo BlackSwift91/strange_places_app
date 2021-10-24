@@ -7,60 +7,40 @@ import {
   ViewStyle,
 } from 'react-native';
 
-import { StackNavigatorParamsList } from '../screens/StartScreen';
-
 import { THEME } from '../theme';
 
 type IStyle = {
   buttonStyle: ViewStyle;
   buttonTextStyle: TextStyle;
+  disabledStyle: ViewStyle;
 };
-type neg = false;
 
 interface ICustomButton {
   buttonText: string;
+  onPressHandler: () => void;
   buttonStyle?: ViewStyle;
   buttonTextStyle?: TextStyle;
+  disabled?: boolean;
 }
 
-interface INavButtonProps extends ICustomButton {
-  navButtonType: boolean;
-  onPressHandler: (value: keyof StackNavigatorParamsList) => void;
-  onPressButtonValue: keyof StackNavigatorParamsList;
-}
-
-export interface IAuthButtonProps extends ICustomButton {
-  onPressHandler: () => void;
-  authButtonType: boolean;
-}
-
-type IbuttonProps = ICustomButton | IAuthButtonProps | INavButtonProps;
+type IbuttonProps = ICustomButton;
 
 export const CustomButton: React.FC<IbuttonProps> = (props): JSX.Element => {
-  if ('authButtonType' in props && props.authButtonType === true) {
-    return (
-      <TouchableOpacity
-        style={{ ...styles.buttonStyle, ...props.buttonStyle }}
-        onPress={() => props.onPressHandler()}>
-        <Text style={{ ...styles.buttonTextStyle, ...props.buttonTextStyle }}>
-          {props.buttonText}
-        </Text>
-      </TouchableOpacity>
-    );
-  } else if ('navButtonType' in props && props.navButtonType === true) {
-    return (
-      <TouchableOpacity
-        style={{ ...styles.buttonStyle, ...props.buttonStyle }}
-        onPress={() => props.onPressHandler(props.onPressButtonValue)}>
-        <Text style={{ ...styles.buttonTextStyle, ...props.buttonTextStyle }}>
-          {props.buttonText}
-        </Text>
-      </TouchableOpacity>
-    );
-  }
-
   return (
-    <TouchableOpacity style={{ ...styles.buttonStyle, ...props.buttonStyle }}>
+    <TouchableOpacity
+      disabled={props.disabled}
+      style={
+        props.disabled
+          ? {
+              ...styles.buttonStyle,
+              ...styles.disabledStyle,
+            }
+          : {
+              ...styles.buttonStyle,
+              ...props.buttonStyle,
+            }
+      }
+      onPress={() => props.onPressHandler()}>
       <Text style={{ ...styles.buttonTextStyle, ...props.buttonTextStyle }}>
         {props.buttonText}
       </Text>
@@ -87,5 +67,9 @@ const styles = StyleSheet.create<IStyle>({
     fontWeight: 'bold',
     letterSpacing: 0.25,
     color: THEME.whiteColor,
+  },
+  disabledStyle: {
+    backgroundColor: '#9e9e9e',
+    borderColor: '#9e9e9e',
   },
 });

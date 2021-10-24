@@ -1,5 +1,9 @@
 import React from 'react';
-import { createStackNavigator, HeaderStyleInterpolators, TransitionSpecs } from '@react-navigation/stack';
+import {
+  createStackNavigator,
+  HeaderStyleInterpolators,
+  TransitionSpecs,
+} from '@react-navigation/stack';
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 // import { AboutScreen } from '../screens/AboutScreen';
 import { StartScreen } from '../screens/StartScreen';
@@ -62,7 +66,7 @@ export const AppNavigator: React.FC = () => {
         name="SignUpScreen"
         component={SignUpScreen}
         options={{
-          title: 'Sign In',
+          title: 'Sign Up',
           headerTintColor: 'white',
           headerTransparent: true,
         }}

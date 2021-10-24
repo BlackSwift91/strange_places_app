@@ -1,5 +1,4 @@
-import { StackNavigationProp } from '@react-navigation/stack';
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -11,16 +10,13 @@ import {
   TextStyle,
   ImageStyle,
 } from 'react-native';
+import { StackNavigationProp } from '@react-navigation/stack';
 
 import { CustomButton } from '../components/CustomButton';
-import { DB } from '../../sglib.config';
+
 import { THEME } from '../theme';
 
-export type StackNavigatorParamsList = {
-  StartScreen: undefined;
-  SignInScreen: undefined;
-  SignUpScreen: undefined;
-};
+import { AuthStackNavigatorParamsList } from '../interfaces/INavigation';
 
 interface IProps {
   screenWrapper: ViewStyle;
@@ -51,21 +47,20 @@ type Style = {
 };
 
 interface StartScreenProps {
-  navigation: StackNavigationProp<StackNavigatorParamsList, 'StartScreen'>;
+  navigation: StackNavigationProp<AuthStackNavigatorParamsList, 'StartScreen'>;
 }
 
 export const StartScreen: React.FC<StartScreenProps> = ({ navigation }) => {
-  const navToScreen = (value: keyof StackNavigatorParamsList) => {
-    navigation.navigate(value);
+  const navToSignInScreen = () => {
+    navigation.navigate('SignInScreen');
+  };
+  const navToSignUpScreen = () => {
+    navigation.navigate('SignUpScreen');
   };
 
-  useEffect(() => {
-    (async () => {
-      // const result = await DB.getAllUsers();
-      const result = await DB.users.getAllUsers();
-      console.log(result);
-    })();
-  }, []);
+  const test = () => {
+    console.log('test');
+  };
 
   return (
     <View style={styles.screenWrapper}>
@@ -96,9 +91,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({ navigation }) => {
               buttonStyle={styles.buttonStyle}
               buttonTextStyle={styles.signInButtonText}
               buttonText={'Sign In'}
-              onPressButtonValue={'SignInScreen'}
-              onPressHandler={navToScreen}
-              navButtonType={true}
+              onPressHandler={navToSignInScreen}
             />
           </View>
 
@@ -107,9 +100,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({ navigation }) => {
               buttonStyle={styles.signUpButton}
               buttonTextStyle={styles.signUpButtonText}
               buttonText={'Sign Up'}
-              onPressButtonValue={'SignUpScreen'}
-              onPressHandler={navToScreen}
-              navButtonType={true}
+              onPressHandler={navToSignUpScreen}
             />
           </View>
           <View style={styles.restorePasswordContainer}>
@@ -117,6 +108,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({ navigation }) => {
               buttonStyle={styles.restorePasswordButton}
               buttonTextStyle={styles.restorePasswordButtonText}
               buttonText={'Restore password'}
+              onPressHandler={test}
             />
           </View>
         </View>
