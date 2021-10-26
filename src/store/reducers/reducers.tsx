@@ -1,4 +1,4 @@
-import { USER_NAME_INPUT_CHANGE, USER_PASSWORD_INPUT_CHANGE } from '../types';
+import { SET_UNIQUE_USER_ID, SET_USER_AVATAR } from '../types';
 import { LoginAction } from '../actions/actions';
 // import { ILoginState } from '../../interfaces/ILoginState';
 // import { IUserData } from '../../interfaces/IUserData';
@@ -43,27 +43,25 @@ const initialState: ILoginState = {
   error: null,
 };
 
-export const authDataReducer = (
-  state = initialState,
-  action: LoginAction,
-): ILoginState => {
+export const authDataReducer = (state = initialState, action: LoginAction): ILoginState => {
   switch (action.type) {
-    case USER_NAME_INPUT_CHANGE:
-      // console.log('Change Input', action.payload);
+    case SET_UNIQUE_USER_ID:
+      console.log('UID', action.payload);
       return {
         ...state,
         userData: {
           ...state.userData,
-          user_name: action.payload,
+          user_id: action.payload,
         },
       };
-    case USER_PASSWORD_INPUT_CHANGE:
-      // console.log('Change Input', action.payload);
+
+    case SET_USER_AVATAR:
+      console.log('SET_USER_AVATAR', action.payload);
       return {
         ...state,
         userData: {
           ...state.userData,
-          userPassword: action.payload,
+          avatar_url: action.payload,
         },
       };
     default:

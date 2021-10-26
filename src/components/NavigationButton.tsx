@@ -3,11 +3,13 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 
 import { HeaderButton } from 'react-navigation-header-buttons';
 
-export const NavigationButton = props => (
-  <HeaderButton
-    {...props}
-    iconSize={28}
-    IconComponent={MaterialCommunityIcons}
-    color={'#0071bc'}
-  />
-)
+export const NavigationButton = props => {
+  return (
+    <HeaderButton
+      {...props}
+      iconSize={28}
+      IconComponent={MaterialCommunityIcons}
+      color={'#0071bc'}
+    />
+  );
+};

@@ -1,14 +1,13 @@
 import React from 'react';
-import {
-  createStackNavigator,
-  HeaderStyleInterpolators,
-  TransitionSpecs,
-} from '@react-navigation/stack';
+import { Button, Text } from 'react-native';
+import { createStackNavigator, HeaderStyleInterpolators, TransitionSpecs } from '@react-navigation/stack';
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 // import { AboutScreen } from '../screens/AboutScreen';
 import { StartScreen } from '../screens/StartScreen';
 import { SignInScreen } from '../screens/SignInScreen';
 import { SignUpScreen } from '../screens/SignUpScreen';
+import { SignUpProfileScreen } from '../screens/SignUpProfileScreen';
+import { TextInputModalScreen } from '../screens/TextInputModalScreen';
 // import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
 // import { NavigationButton } from '../components/NavigationButton';
@@ -41,7 +40,8 @@ const horizontalAnimation = {
 
 export const AppNavigator: React.FC = () => {
   return (
-    <Stack.Navigator screenOptions={horizontalAnimation}>
+    // <Stack.Navigator screenOptions={horizontalAnimation}>
+    <Stack.Navigator>
       <Stack.Screen
         name="StartScreen"
         component={StartScreen}
@@ -70,6 +70,26 @@ export const AppNavigator: React.FC = () => {
           headerTintColor: 'white',
           headerTransparent: true,
         }}
+      />
+      <Stack.Screen
+        name="SignUpProfileScreen"
+        component={SignUpProfileScreen}
+        options={{
+          title: 'Edit your profile',
+          headerTintColor: 'white',
+          headerTransparent: true,
+          headerLeft: () => null,
+        }}
+      />
+      <Stack.Screen
+        name="TextInputModalScreen"
+        component={TextInputModalScreen}
+        options={({ navigation, route }) => ({
+          presentation: 'modal',
+          title: 'Test',
+          headerTintColor: 'blue',
+          headerTransparent: true,
+        })}
       />
     </Stack.Navigator>
   );

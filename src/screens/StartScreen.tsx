@@ -75,10 +75,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({ navigation }) => {
           hidden={false}
         />
         <View style={styles.logoContainer}>
-          <Image
-            style={styles.logo}
-            source={require('../images/logo_round.png')}
-          />
+          <Image style={styles.logo} source={require('../images/logo_round.png')} />
         </View>
         <View style={styles.authentificationContainer}>
           <Text style={styles.h1TextStyle}> Welcome to Strange Places</Text>

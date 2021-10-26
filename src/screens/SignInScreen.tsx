@@ -15,14 +15,11 @@ import {
 import { useDispatch } from 'react-redux';
 import { StackNavigationProp } from '@react-navigation/stack';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import auth from '@react-native-firebase/auth';
+// import auth from '@react-native-firebase/auth';
 
 import { THEME } from '../theme';
 import { CustomButton } from '../components/CustomButton';
-import {
-  userNameChangeInput,
-  userPasswordChangeInput,
-} from '../store/actions/actions';
+import { userNameChangeInput, userPasswordChangeInput } from '../store/actions/actions';
 
 import { DB } from '../../sglib.config';
 
@@ -118,11 +115,7 @@ export const SignInScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
           <View style={styles.userLoginTextInputContainer}>
             <View style={styles.textInputContainer}>
               <View style={styles.inputIconContainer}>
-                <MaterialCommunityIcons
-                  name="account"
-                  color={THEME.darkGray}
-                  size={24}
-                />
+                <MaterialCommunityIcons name="account" color={THEME.darkGray} size={24} />
               </View>
 
               <TextInput
@@ -145,11 +138,7 @@ export const SignInScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
           <View style={styles.userPasswordTextInputContainer}>
             <View style={styles.textInputContainer}>
               <View style={styles.inputIconContainer}>
-                <MaterialCommunityIcons
-                  name="lock"
-                  color={THEME.darkGray}
-                  size={24}
-                />
+                <MaterialCommunityIcons name="lock" color={THEME.darkGray} size={24} />
               </View>
               <TextInput
                 autoCapitalize="none"
@@ -163,11 +152,7 @@ export const SignInScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
               <TouchableOpacity
                 style={styles.inputIconContainer}
                 onPress={() => setPasswordVisible(prev => !prev)}>
-                <MaterialCommunityIcons
-                  name="eye"
-                  color={THEME.darkGray}
-                  size={24}
-                />
+                <MaterialCommunityIcons name="eye" color={THEME.darkGray} size={24} />
               </TouchableOpacity>
             </View>
           </View>

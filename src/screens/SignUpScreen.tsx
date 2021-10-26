@@ -12,6 +12,7 @@ import {
   ImageStyle,
   TextStyle,
 } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 import { StackNavigationProp } from '@react-navigation/stack';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import auth from '@react-native-firebase/auth';
@@ -21,6 +22,7 @@ import { CustomButton } from '../components/CustomButton';
 import { AlertText } from '../components/AlertText';
 
 import { DB } from '../../sglib.config';
+import { setUniqueUserId } from '../store/actions/actions';
 
 import { AuthStackNavigatorParamsList } from '../interfaces/INavigation';
 
@@ -56,15 +58,15 @@ export const SignUpScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
 
   const [userLogin, setUserLogin] = useState<string>('');
   const [userPassword, setUserPassword] = useState<string>('');
-  const [userRepeatedPassword, setUserRepeatedPassword] = useState<
-    string | undefined
-  >(undefined);
+  const [userRepeatedPassword, setUserRepeatedPassword] = useState<string | undefined>(undefined);
   const [passwordVisible, setPasswordVisible] = useState<boolean>(true);
 
   const [errorDescription, setErrorDescription] = useState<string>('');
+  const [userId, setUserId] = useState<string>('');
   const [loginError, setLoginError] = useState<Boolean>(false);
   const [passwordError, setPasswordError] = useState<Boolean>(false);
   // const [error, setError] = useState<Boolean>(false);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     (async () => {
@@ -73,36 +75,51 @@ export const SignUpScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
     })();
   }, []);
 
+  useEffect(() => {
+    dispatch(setUniqueUserId(userId));
+  }, [dispatch, userId]);
+
   // const userDocument = await firestore().collection('users').get();
   // console.log('my da', userDocument._changes);
   const userSignUp = async () => {
-    if (userPassword === '') {
-      formValidation();
-      return;
-    }
+    // if (userPassword === '') {
+    //   formValidation();
+    //   return;
+    // }
     setLoginError(false);
     changeErrorDescription(' ');
 
     auth()
-      .createUserWithEmailAndPassword('test4@gmail.com', userPassword)
+      .signInWithEmailAndPassword('test4@gmail.com', '11111111')
       .then(res => {
-        console.log('res', res);
+        setUserId(res.user.uid);
       })
       .then(() => {
         console.log('User account created & signed in!');
+        navigation.navigate('SignUpProfileScreen');
       })
       .catch(error => {
-        if (error.code === 'auth/email-already-in-use') {
-          setLoginError(true);
-          changeErrorDescription('This email address is already in use!');
-        }
-        if (error.code === 'auth/invalid-email') {
-          // console.log('That email address is invalid!');
-          setLoginError(true);
-          changeErrorDescription('This email address is invalid!');
-        }
         console.log(error);
       });
+
+    // .createUserWithEmailAndPassword('test4@gmail.com', userPassword)
+    //  
+    // .then(() => {
+    //   console.log('User account created & signed in!');
+    // })
+    // .catch(error => {
+    //   if (error.code === 'auth/email-already-in-use') {
+    //     setLoginError(true);
+    //     changeErrorDescription('This email address is already in use!');
+    //     navigation.navigate('SignUpProfileScreen');
+    //   }
+    //   if (error.code === 'auth/invalid-email') {
+    //     // console.log('That email address is invalid!');
+    //     setLoginError(true);
+    //     changeErrorDescription('This email address is invalid!');
+    //   }
+    //   console.log(error);
+    // });
   };
 
   const changeErrorDescription = (error: string) => {
@@ -160,13 +177,17 @@ export const SignUpScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
         />
         <View style={styles.authentificationContainer}>
           <View style={styles.loginTextInputWrapper}>
-            <View style={loginError ? { ...textInputStyle.insideWrapper, ...textInputStyle.alertStyle, } : textInputStyle.insideWrapper}>
+            <View
+              style={
+                loginError
+                  ? {
+                    ...textInputStyle.insideWrapper,
+                    ...textInputStyle.alertStyle,
+                  }
+                  : textInputStyle.insideWrapper
+              }>
               <View style={textInputStyle.imageContainer}>
-                <MaterialCommunityIcons
-                  name="account"
-                  color={THEME.darkGray}
-                  size={24}
-                />
+                <MaterialCommunityIcons name="account" color={THEME.darkGray} size={24} />
               </View>
               <TextInput
                 ref={userNameInputRef}
@@ -187,13 +208,17 @@ export const SignUpScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
           </View>
 
           <View style={styles.passwordTextInputWrapper}>
-            <View style={passwordError ? { ...textInputStyle.insideWrapper, ...textInputStyle.alertStyle, } : textInputStyle.insideWrapper}>
+            <View
+              style={
+                passwordError
+                  ? {
+                    ...textInputStyle.insideWrapper,
+                    ...textInputStyle.alertStyle,
+                  }
+                  : textInputStyle.insideWrapper
+              }>
               <View style={textInputStyle.imageContainer}>
-                <MaterialCommunityIcons
-                  name="lock"
-                  color={THEME.darkGray}
-                  size={24}
-                />
+                <MaterialCommunityIcons name="lock" color={THEME.darkGray} size={24} />
               </View>
               <TextInput
                 autoCapitalize="none"
@@ -213,23 +238,23 @@ export const SignUpScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
               <TouchableOpacity
                 style={textInputStyle.imageContainer}
                 onPress={() => setPasswordVisible(prev => !prev)}>
-                <MaterialCommunityIcons
-                  name="eye"
-                  color={THEME.darkGray}
-                  size={24}
-                />
+                <MaterialCommunityIcons name="eye" color={THEME.darkGray} size={24} />
               </TouchableOpacity>
             </View>
           </View>
 
           <View style={styles.passwordTextInputWrapper}>
-            <View style={passwordError ? { ...textInputStyle.insideWrapper, ...textInputStyle.alertStyle, } : textInputStyle.insideWrapper}>
+            <View
+              style={
+                passwordError
+                  ? {
+                    ...textInputStyle.insideWrapper,
+                    ...textInputStyle.alertStyle,
+                  }
+                  : textInputStyle.insideWrapper
+              }>
               <View style={textInputStyle.imageContainer}>
-                <MaterialCommunityIcons
-                  name="lock"
-                  color={THEME.darkGray}
-                  size={24}
-                />
+                <MaterialCommunityIcons name="lock" color={THEME.darkGray} size={24} />
               </View>
               <TextInput
                 autoCapitalize="none"
@@ -245,11 +270,7 @@ export const SignUpScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
               <TouchableOpacity
                 style={textInputStyle.imageContainer}
                 onPress={() => setPasswordVisible(prev => !prev)}>
-                <MaterialCommunityIcons
-                  name="eye"
-                  color={THEME.darkGray}
-                  size={24}
-                />
+                <MaterialCommunityIcons name="eye" color={THEME.darkGray} size={24} />
               </TouchableOpacity>
             </View>
           </View>
