@@ -11,17 +11,19 @@ import {
   ViewStyle,
   ImageStyle,
 } from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import firestore from '@react-native-firebase/firestore';
+import { useIsFocused } from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
+import { useDispatch } from 'react-redux';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { THEME } from '../theme';
+import { SignUpScreenProps } from '../interfaces/INavigation';
 import { CustomButton } from '../components/CustomButton';
 import { ICustomButtonStyle } from '../interfaces/ICustomButtonStyle';
 import { AlertText } from '../components/AlertText';
-
-import { DB } from '../../sglib.config';
-
-import { SignUpScreenProps } from '../interfaces/INavigation';
+import { setIsNewUser } from '../store/actions/actions';
+import { UserIcon } from '../images/UserIcon';
 
 interface IProps {
   screenContainer: ViewStyle;
@@ -38,27 +40,9 @@ interface ItextInputStyle {
   alertStyle?: ViewStyle;
 }
 
-// {
-//   "additionalUserInfo": {
-//     "isNewUser": true
-//   },
-//   "user": {
-//     "displayName": null,
-//     "email": "andrey1@gmail.com",
-//     "emailVerified": false,
-//     "isAnonymous": false,
-//     "metadata": [Object],
-//     "phoneNumber": null,
-//     "photoURL": null,
-//     "providerData": [Array],
-//     "providerId": "firebase",
-//     "tenantId": null,
-//     "uid": "esDQxltpq8eeIb0iJZQorwhLWOv2"
-//   }
-// }
-
 export const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
-  const st = useSelector((state) => state.authDataReducer);
+  // const state = useSelector((state) => state.authDataReducer);
+  const dispatch = useDispatch();
   const userNameInputRef = useRef<TextInput>(null);
   const userPasswordInputRef = useRef<TextInput>(null);
   const userRepeatPasswordInputRef = useRef<TextInput>(null);
@@ -71,13 +55,13 @@ export const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
   const [errorDescription, setErrorDescription] = useState<string>('');
   const [loginError, setLoginError] = useState<Boolean>(false);
   const [passwordError, setPasswordError] = useState<Boolean>(false);
+  const isFocused = useIsFocused();
 
   useEffect(() => {
-    (async () => {
-      const result = await DB.users.getAllUsers();
-      // console.log(result);
-    })();
-  }, []);
+    if (isFocused) {
+      dispatch(setIsNewUser(true));
+    }
+  }, [dispatch, isFocused]);
 
   const userSignUp = async () => {
     // if (userPassword === '') {
@@ -100,20 +84,42 @@ export const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
       //   console.log(error);
       // });
 
-      .createUserWithEmailAndPassword('andrey4@gmail.com', '11111111')
+      .createUserWithEmailAndPassword('andrey9@gmail.com', '11111111')
       .then(res => {
         console.log('User account created & signed in!');
-        console.log('signup', res);
-        navigation.navigate('SignUpProfileScreen', {
-          user_name: 'test4@gmail.com',
-          user_id: res.user.uid,
-        });
+        firestore()
+          .collection('users')
+          .add({
+            user_id: res.user.uid,
+            user_name: userLogin,
+            first_name: '',
+            last_name: '',
+            about_user: '',
+            avatar_url: UserIcon,
+            location: {
+              city: '',
+              country: '',
+            },
+          })
+          .then(() => {
+            console.log('Fields added!');
+          })
+          .then(() => {
+            navigation.navigate('SignUpProfileScreen', {
+              user_name: userLogin,
+              user_id: res.user.uid,
+            });
+          });
       })
       .catch(error => {
         if (error.code === 'auth/email-already-in-use') {
-          setLoginError(true);
-          changeErrorDescription('This email address is already in use!');
+          // setLoginError(true);
+          // changeErrorDescription('This email address is already in use!');
           // navigation.navigate('SignUpProfileScreen');
+          navigation.navigate('SignUpProfileScreen', {
+            user_name: 'andrey9@gmail.com',
+            user_id: 'res.user.uid',
+          });
         }
         if (error.code === 'auth/invalid-email') {
           // console.log('That email address is invalid!');
@@ -183,9 +189,9 @@ export const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
               style={
                 loginError
                   ? {
-                    ...textInputStyle.insideWrapper,
-                    ...textInputStyle.alertStyle,
-                  }
+                      ...textInputStyle.insideWrapper,
+                      ...textInputStyle.alertStyle,
+                    }
                   : textInputStyle.insideWrapper
               }>
               <View style={textInputStyle.imageContainer}>
@@ -214,9 +220,9 @@ export const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
               style={
                 passwordError
                   ? {
-                    ...textInputStyle.insideWrapper,
-                    ...textInputStyle.alertStyle,
-                  }
+                      ...textInputStyle.insideWrapper,
+                      ...textInputStyle.alertStyle,
+                    }
                   : textInputStyle.insideWrapper
               }>
               <View style={textInputStyle.imageContainer}>
@@ -250,9 +256,9 @@ export const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
               style={
                 passwordError
                   ? {
-                    ...textInputStyle.insideWrapper,
-                    ...textInputStyle.alertStyle,
-                  }
+                      ...textInputStyle.insideWrapper,
+                      ...textInputStyle.alertStyle,
+                    }
                   : textInputStyle.insideWrapper
               }>
               <View style={textInputStyle.imageContainer}>
@@ -429,3 +435,10 @@ const restorePasswordButtonStyle = StyleSheet.create<ICustomButtonStyle>({
     fontWeight: 'normal',
   },
 });
+
+// useEffect(() => {
+//   (async () => {
+//     const result = await DB.users.getAllUsers();
+//     // console.log(result);
+//   })();
+// }, []);

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   StyleSheet,
@@ -14,9 +14,10 @@ import {
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { setAllUserData } from '../store/actions/actions';
+import { setAllUserData, setIsNewUser } from '../store/actions/actions';
 import auth from '@react-native-firebase/auth';
 import { useDispatch } from 'react-redux';
+import { useIsFocused } from '@react-navigation/native';
 
 import { THEME } from '../theme';
 import { CustomButton } from '../components/CustomButton';
@@ -69,6 +70,13 @@ export const SignInScreen: React.FC<ISignInScreenProps> = ({ navigation }) => {
   const [errorDescription, setErrorDescription] = useState<string>('');
   const [loginError, setLoginError] = useState<Boolean>(false);
   const [passwordError, setPasswordError] = useState<Boolean>(false);
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    if (isFocused) {
+      dispatch(setIsNewUser(false));
+    }
+  }, [dispatch, isFocused]);
 
   const test = () => {
     if (userPassword === '') {
@@ -174,9 +182,9 @@ export const SignInScreen: React.FC<ISignInScreenProps> = ({ navigation }) => {
               style={
                 loginError
                   ? {
-                    ...textInputStyle.insideWrapper,
-                    ...textInputStyle.alertStyle,
-                  }
+                      ...textInputStyle.insideWrapper,
+                      ...textInputStyle.alertStyle,
+                    }
                   : textInputStyle.insideWrapper
               }>
               <View style={textInputStyle.imageContainer}>
@@ -205,9 +213,9 @@ export const SignInScreen: React.FC<ISignInScreenProps> = ({ navigation }) => {
               style={
                 passwordError
                   ? {
-                    ...textInputStyle.insideWrapper,
-                    ...textInputStyle.alertStyle,
-                  }
+                      ...textInputStyle.insideWrapper,
+                      ...textInputStyle.alertStyle,
+                    }
                   : textInputStyle.insideWrapper
               }>
               <View style={textInputStyle.imageContainer}>

@@ -14,6 +14,7 @@ import { StartScreen } from '../screens/StartScreen';
 import { SignInScreen } from '../screens/SignInScreen';
 import { SignUpScreen } from '../screens/SignUpScreen';
 import { AboutScreen } from '../screens/AboutScreen';
+import { MainScreen } from '../screens/MainScreen';
 import { SignUpProfileScreen } from '../screens/SignUpProfileScreen';
 import { TextInputModalScreen } from '../screens/TextInputModalScreen';
 import { SetUserLocationModalScreen } from '../screens/SetUserLocationModalScreen';
@@ -48,16 +49,16 @@ const horizontalAnimation = {
 };
 
 export const AppNavigator: React.FC = () => {
-  const st = useSelector((state) => state.authDataReducer);
+  const isNewUser = useSelector(state => state.authDataReducer.isNewUser);
   const [user, setUser] = useState();
   const [initializing, setInitializing] = useState(true);
-  console.log('st', st);
-  
+
   function onAuthStateChanged(user) {
-    console.log('user', user);
     setUser(user);
     if (initializing) setInitializing(false);
   }
+
+  console.log('isNewUser', isNewUser);
 
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
@@ -66,7 +67,7 @@ export const AppNavigator: React.FC = () => {
 
   if (initializing) return null;
 
-  if (!user) {
+  if (!user || isNewUser) {
     return (
       // <Stack.Navigator screenOptions={horizontalAnimation}>
       <Stack.Navigator>
@@ -133,8 +134,8 @@ export const AppNavigator: React.FC = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="AboutScreen"
-        component={AboutScreen}
+        name="MainScreen"
+        component={MainScreen}
         options={{
           title: 'Sign In',
           headerMode: 'screen',

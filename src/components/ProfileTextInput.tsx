@@ -45,6 +45,7 @@ const styles = StyleSheet.create<IProfileTextInputStyle>({
   },
   label: {
     alignSelf: 'flex-start',
+    paddingLeft: 0,
   },
   textInput: {
     width: '100%',

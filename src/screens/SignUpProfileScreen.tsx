@@ -20,7 +20,7 @@ import { THEME } from '../theme';
 import { UserIcon } from '../images/UserIcon';
 import { ISignUpProfileScreen } from '../interfaces/INavigation';
 import { ICustomButtonStyle } from '../interfaces/ICustomButtonStyle';
-import { setAllUserData } from '../store/actions/actions';
+import { setAllUserData, setIsNewUser } from '../store/actions/actions';
 
 import { CustomButton } from '../components/CustomButton';
 import { ProfileTextInput } from './../components/ProfileTextInput';
@@ -34,6 +34,7 @@ interface IProps {
   passwordTextInputWrapper: ViewStyle;
   userImageContainer: ViewStyle;
   textInputWrapper: ViewStyle;
+  userNameStyle: ViewStyle;
 }
 
 export interface IUser {
@@ -63,8 +64,8 @@ export const SignUpProfileScreen: React.FC<ISignUpProfileScreen> = ({ navigation
   BackHandler.addEventListener('hardwareBackPress', () => true);
   const dispatch = useDispatch();
 
-  const [userLogin, setUserLogin] = useState<string>(route.params.user_name);
-  const [userId, setUserId] = useState<string>(route.params.user_id);
+  const [userLogin, setUserLogin] = useState<string>('');
+  const [userId, setUserId] = useState<string>('');
   const [userFirstName, setUserFirstName] = useState<string>('');
   const [userLastName, setUserLastName] = useState<string>('');
   const [aboutUserText, setAboutUserText] = useState<string>('');
@@ -74,39 +75,6 @@ export const SignUpProfileScreen: React.FC<ISignUpProfileScreen> = ({ navigation
 
   console.log('log', userLogin);
   console.log('id', userId);
-
-
-  // setLocation({
-  //   city: userCity,
-  //   country: userCountry,
-  // });
-
-  // useEffect(() => {
-  //   if (userDBId) {
-  //     dispatch(
-  //       setAllUserData(
-  //         userId,
-  //         userDBId,
-  //         userLogin,
-  //         userFirstName,
-  //         userLastName,
-  //         aboutUserText,
-  //         image.uri,
-  //         location,
-  //       ),
-  //     );
-  //   }
-  // }, [
-  //   dispatch,
-  //   userDBId,
-  //   aboutUserText,
-  //   image.uri,
-  //   userFirstName,
-  //   userLastName,
-  //   userId,
-  //   userLogin,
-  //   location,
-  // ]);
 
   function pickSingleBase64(cropit: boolean) {
     ImagePicker.openPicker({
@@ -159,17 +127,17 @@ export const SignUpProfileScreen: React.FC<ISignUpProfileScreen> = ({ navigation
     }
   }, [route.params.country]);
 
-  // useEffect(() => {
-  //   if (route.params.user_name) {
-  //     setUserLogin(route.params.user_name);
-  //   }
-  // }, [route.params.user_name]);
+  useEffect(() => {
+    if (route.params.user_name) {
+      setUserLogin(route.params.user_name);
+    }
+  }, [route.params.user_name]);
 
-  // useEffect(() => {
-  //   if (route.params.user_id) {
-  //     setUserId(route.params.user_id);
-  //   }
-  // }, [route.params.user_id]);
+  useEffect(() => {
+    if (route.params.user_id) {
+      setUserId(route.params.user_id);
+    }
+  }, [route.params.user_id]);
 
   useEffect(() => {
     if (route.params?.textInput) {
@@ -185,24 +153,7 @@ export const SignUpProfileScreen: React.FC<ISignUpProfileScreen> = ({ navigation
 
   const submitUserInformation = async () => {
     const data: IUser[] = [];
-    //await firestore()
-    //   .collection('users')
-    //   .add({
-    //     user_id: userId,
-    //     user_name: userLogin,
-    //     first_name: userFirstName,
-    //     last_name: userLastName,
-    //     about_user: aboutUserText,
-    //     avatar_url: image.image.uri,
-    //     location: {
-    //       city: userCity,
-    //       country: userCountry,
-    //     },
-    //   })
-    //   .then(() => {
-    //     console.log('User added!');
-    //   });
-    console.log('User added!');
+
     await firestore()
       .collection('users')
       .where('user_id', '==', `${userId}`)
@@ -211,6 +162,21 @@ export const SignUpProfileScreen: React.FC<ISignUpProfileScreen> = ({ navigation
         response.forEach((doc: any) => {
           data.push({ _id: doc.id });
         });
+      });
+
+    await firestore()
+      .collection('users')
+      .doc(data[0]._id)
+      .update({
+        user_name: userLogin,
+        first_name: userFirstName,
+        last_name: userLastName,
+        about_user: aboutUserText,
+        avatar_url: image.uri,
+        'location.city': userCity,
+        'location.country': userCountry,
+      })
+      .then(() => {
         const location = {
           city: userCity,
           country: userCountry,
@@ -227,6 +193,11 @@ export const SignUpProfileScreen: React.FC<ISignUpProfileScreen> = ({ navigation
             location,
           ),
         );
+        console.log('User data updated!');
+      })
+      .then(() => {
+        dispatch(setIsNewUser(false));
+        console.log('New user successfully created!');
       });
   };
 
@@ -294,7 +265,7 @@ export const SignUpProfileScreen: React.FC<ISignUpProfileScreen> = ({ navigation
               onPressHandler={onButtonPress}
             />
           </View>
-          <View>
+          <View style={styles.userNameStyle}>
             <Text>{userLogin}</Text>
           </View>
           <View style={styles.textInputWrapper}>
@@ -329,10 +300,10 @@ export const SignUpProfileScreen: React.FC<ISignUpProfileScreen> = ({ navigation
               value={userLocationTextValue}
             />
           </View>
-          <View style={signInButtonStyle.buttonContainerStyle}>
+          <View style={confirmButtonStyle.buttonContainerStyle}>
             <CustomButton
-              buttonStyle={signInButtonStyle.buttonStyle}
-              buttonTextStyle={signInButtonStyle.buttonTextStyle}
+              buttonStyle={confirmButtonStyle.buttonStyle}
+              buttonTextStyle={confirmButtonStyle.buttonTextStyle}
               buttonText={'Confirm'}
               onPressHandler={submitUserInformation}
             />
@@ -368,6 +339,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 1)',
     alignItems: 'center',
   },
+  userNameStyle: {
+    marginTop: 10,
+  },
   textInputWrapper: {
     width: '90%',
     marginTop: 10,
@@ -385,10 +359,10 @@ const styles = StyleSheet.create({
   },
 });
 
-const signInButtonStyle = StyleSheet.create<ICustomButtonStyle>({
+const confirmButtonStyle = StyleSheet.create<ICustomButtonStyle>({
   buttonContainerStyle: {
     width: '90%',
-    marginTop: 60,
+    marginTop: 40,
   },
   buttonStyle: {
     backgroundColor: THEME.mainColor,
@@ -400,7 +374,7 @@ const signInButtonStyle = StyleSheet.create<ICustomButtonStyle>({
 
 const changeAvatarButtonStyle = StyleSheet.create<ICustomButtonStyle>({
   buttonContainerStyle: {
-    paddingTop: 15,
+    paddingTop: 10,
     width: 200,
   },
   buttonStyle: {

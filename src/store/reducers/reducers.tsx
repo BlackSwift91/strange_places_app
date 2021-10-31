@@ -17,7 +17,7 @@ interface IUserData {
   user_name: string;
 }
 
-const initialState: IUserData = {
+const initialUserState: IUserData = {
   _id: '',
   about_user: '',
   avatar_url: '',
@@ -31,7 +31,7 @@ const initialState: IUserData = {
   user_name: '',
 };
 
-export const userDataReducer = (state = initialState, action: UserActions): IUserData => {
+export const userDataReducer = (state = initialUserState, action: UserActions): IUserData => {
   console.log('reducer');
   console.log(action.type);
   switch (action.type) {
@@ -60,13 +60,20 @@ export const userDataReducer = (state = initialState, action: UserActions): IUse
   return state;
 };
 
-export const authDataReducer = (state = false, action: LoginActions) => {
-  console.log('reducer auth');
+interface IAuthData {
+  isNewUser: boolean;
+}
+
+const initialAuthState: IAuthData = {
+  isNewUser: false,
+};
+
+export const authDataReducer = (state = initialAuthState, action: LoginActions) => {
   console.log(action.type);
   switch (action.type) {
     case IS_NEW_USER:
-      console.log('UID', action.payload);
-      return { state: action.payload };
+      console.log('INU', action.payload);
+      return { ...state, isNewUser: action.payload };
     default:
       state;
   }
