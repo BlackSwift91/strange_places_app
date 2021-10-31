@@ -8,12 +8,15 @@ import {
   StatusBar,
   Dimensions,
   Keyboard,
+  Text,
 } from 'react-native';
 
-import { THEME } from '../theme';
-import { ITextInputModalScreen } from '../interfaces/INavigation';
-import { NavigationButton } from '../components/NavigationButton';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
+
+import { ISetUserLocationModalScreen } from '../interfaces/INavigation';
+import { NavigationButton } from '../components/NavigationButton';
+
+import { THEME } from '../theme';
 
 interface IProfileTextInputStyle {
   wrapper: ViewStyle;
@@ -31,13 +34,17 @@ interface IProfileTextInputProps {
 
 const windowWidth = Dimensions.get('window').width;
 
-export const TextInputModalScreen: React.FC<ITextInputModalScreen> = ({ navigation, route }) => {
-  const [text, setText] = useState<string>(route.params.textValue);
+export const SetUserLocationModalScreen: React.FC<ISetUserLocationModalScreen> = ({
+  navigation,
+  route,
+}) => {
+  const [city, setCity] = useState<string>(route.params.city);
+  const [country, setCountry] = useState<string>(route.params.country);
   const userNameInputRef = useRef<TextInput>(null);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      title: route.params.textLabel,
+      title: 'Location',
       headerTintColor: THEME.mainColor,
       headerRight: () => (
         <HeaderButtons HeaderButtonComponent={NavigationButton}>
@@ -46,13 +53,13 @@ export const TextInputModalScreen: React.FC<ITextInputModalScreen> = ({ navigati
             iconName="check"
             onPress={async () => {
               await Keyboard.dismiss();
-              navigation.navigate('SignUpProfileScreen', { textInput: text });
+              navigation.navigate('SignUpProfileScreen', { city: city, country: country });
             }}
           />
         </HeaderButtons>
       ),
     });
-  }, [text, navigation, route.params.textLabel]);
+  }, [navigation, city, country]);
 
   useEffect(() => {
     setTimeout(() => userNameInputRef.current?.focus(), 40);
@@ -60,16 +67,29 @@ export const TextInputModalScreen: React.FC<ITextInputModalScreen> = ({ navigati
 
   return (
     <View style={styles.center}>
-      <View style={styles.wrapper}>
+      <View style={styles.countryWrapper}>
+        <Text style={styles.label}>Country</Text>
         <TextInput
           ref={userNameInputRef}
-          placeholder={route.params.placeholder}
+          // placeholder={route.params.placeholder}
           style={styles.textInput}
-          onChangeText={value => setText(value)}
-          value={text}
-          multiline={true}
+          onChangeText={value => setCountry(value)}
+          value={country}
           returnKeyType={'none'}
-          maxLength={128}
+          maxLength={30}
+        />
+      </View>
+
+      <View style={styles.cityWrapper}>
+        <Text style={styles.label}>City</Text>
+        <TextInput
+          ref={userNameInputRef}
+          // placeholder={route.params.placeholder}
+          style={styles.textInput}
+          onChangeText={value => setCity(value)}
+          value={city}
+          returnKeyType={'none'}
+          maxLength={30}
         />
       </View>
     </View>
@@ -87,7 +107,18 @@ const styles = StyleSheet.create({
   text: {
     color: 'black',
   },
-  wrapper: {
+  countryWrapper: {
+    borderRadius: 0,
+    borderColor: THEME.darkGray,
+    borderBottomWidth: 1,
+    backgroundColor: 'transparent',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: windowWidth - 40,
+    paddingVertical: 0,
+  },
+  cityWrapper: {
+    marginTop: 20,
     borderRadius: 0,
     borderColor: THEME.darkGray,
     borderBottomWidth: 1,

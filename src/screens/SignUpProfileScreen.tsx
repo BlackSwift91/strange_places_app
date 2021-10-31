@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -7,26 +7,24 @@ import {
   Dimensions,
   ViewStyle,
   ImageStyle,
-  TextStyle,
   BackHandler,
   Text,
-  TextInput,
-  TouchableWithoutFeedback,
-  Keyboard,
+  PermissionsAndroid,
+  Image,
 } from 'react-native';
+import firestore from '@react-native-firebase/firestore';
 import { useDispatch } from 'react-redux';
-import { StackNavigationProp } from '@react-navigation/stack';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { setUniqueUserId } from '../store/actions/actions';
+import ImagePicker from 'react-native-image-crop-picker';
 
 import { THEME } from '../theme';
+import { UserIcon } from '../images/UserIcon';
+import { ISignUpProfileScreen } from '../interfaces/INavigation';
+import { ICustomButtonStyle } from '../interfaces/ICustomButtonStyle';
+import { setAllUserData } from '../store/actions/actions';
+
 import { CustomButton } from '../components/CustomButton';
 import { ProfileTextInput } from './../components/ProfileTextInput';
 import { ProfileModalTextInput } from './../components/ProfileModalTextInput';
-
-import { DB } from '../../sglib.config';
-
-import { AuthStackNavigatorParamsList } from '../interfaces/INavigation';
 
 interface IProps {
   screenContainer: ViewStyle;
@@ -38,52 +36,232 @@ interface IProps {
   textInputWrapper: ViewStyle;
 }
 
-
-
-interface ICustomButtonStyle {
-  buttonContainerStyle: ViewStyle;
-  buttonStyle: ViewStyle;
-  buttonTextStyle: TextStyle;
+export interface IUser {
+  [key: string]: string;
 }
 
-interface SignInScreenProps {
-  navigation: StackNavigationProp<AuthStackNavigatorParamsList, 'SignUpProfileScreen'>;
-}
+const requestCameraPermission = async () => {
+  try {
+    const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA, {
+      title: 'App Camera Permission',
+      message: 'App needs access to your camera ',
+      buttonNeutral: 'Ask Me Later',
+      buttonNegative: 'Cancel',
+      buttonPositive: 'OK',
+    });
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      console.log('Camera permission given');
+    } else {
+      console.log('Camera permission denied');
+    }
+  } catch (err) {
+    console.warn(err);
+  }
+};
 
-export const SignUpProfileScreen: React.FC<SignInScreenProps> = ({ navigation, route }) => {
-  BackHandler.addEventListener('hardwareBackPress', function () { return true });
+export const SignUpProfileScreen: React.FC<ISignUpProfileScreen> = ({ navigation, route }) => {
+  BackHandler.addEventListener('hardwareBackPress', () => true);
   const dispatch = useDispatch();
 
-  // const userNameInputRef = useRef<TextInput>(null);
-  // const userPasswordInputRef = useRef<TextInput>(null);
-  // const userRepeatPasswordInputRef = useRef<TextInput>(null);
+  const [userLogin, setUserLogin] = useState<string>(route.params.user_name);
+  const [userId, setUserId] = useState<string>(route.params.user_id);
   const [userFirstName, setUserFirstName] = useState<string>('');
+  const [userLastName, setUserLastName] = useState<string>('');
   const [aboutUserText, setAboutUserText] = useState<string>('');
-  const [errorDescription, setErrorDescription] = useState<string>('');
+  const [userCity, setUserCity] = useState<string>('');
+  const [userCountry, setUserCountry] = useState<string>('');
+  const [image, setImage] = useState({ uri: UserIcon, width: 140, height: 140 });
 
-  React.useEffect(() => {
-    setAboutUserText(route.params?.post);
-  }, [route]);
+  console.log('log', userLogin);
+  console.log('id', userId);
 
-  const test = () => {
-    console.log(1);
+
+  // setLocation({
+  //   city: userCity,
+  //   country: userCountry,
+  // });
+
+  // useEffect(() => {
+  //   if (userDBId) {
+  //     dispatch(
+  //       setAllUserData(
+  //         userId,
+  //         userDBId,
+  //         userLogin,
+  //         userFirstName,
+  //         userLastName,
+  //         aboutUserText,
+  //         image.uri,
+  //         location,
+  //       ),
+  //     );
+  //   }
+  // }, [
+  //   dispatch,
+  //   userDBId,
+  //   aboutUserText,
+  //   image.uri,
+  //   userFirstName,
+  //   userLastName,
+  //   userId,
+  //   userLogin,
+  //   location,
+  // ]);
+
+  function pickSingleBase64(cropit: boolean) {
+    ImagePicker.openPicker({
+      width: 140,
+      height: 140,
+      cropping: cropit,
+      includeBase64: true,
+      includeExif: true,
+      cropperCircleOverlay: true,
+      mediaType: 'photo',
+    })
+      .then(img => {
+        console.log('received base64 image');
+        setImage({
+          uri: `data:${img.mime};base64,` + img.data,
+          width: img.width,
+          height: img.height,
+        });
+      })
+      .catch(e => console.log(e));
+  }
+  const onButtonPress = React.useCallback(() => {
+    requestCameraPermission();
+    pickSingleBase64(true);
+  }, []);
+
+  function setTextInputUserLocationValue() {
+    if (!userCountry) {
+      return userCity;
+    } else if (!userCity) {
+      return userCountry;
+    } else {
+      return `${userCountry}, ${userCity}`;
+    }
+  }
+
+  useEffect(() => {
+    if (route.params?.city) {
+      setUserCity(route.params.city);
+    } else {
+      setUserCity('');
+    }
+  }, [route.params.city]);
+
+  useEffect(() => {
+    if (route.params?.country) {
+      setUserCountry(route.params.country);
+    } else {
+      setUserCountry('');
+    }
+  }, [route.params.country]);
+
+  // useEffect(() => {
+  //   if (route.params.user_name) {
+  //     setUserLogin(route.params.user_name);
+  //   }
+  // }, [route.params.user_name]);
+
+  // useEffect(() => {
+  //   if (route.params.user_id) {
+  //     setUserId(route.params.user_id);
+  //   }
+  // }, [route.params.user_id]);
+
+  useEffect(() => {
+    if (route.params?.textInput) {
+      setAboutUserText(route.params.textInput);
+    }
+  }, [route.params?.textInput]);
+
+  useEffect(() => {
+    if (route.params?.textInput) {
+      setAboutUserText(route.params.textInput);
+    }
+  }, [route.params?.textInput]);
+
+  const submitUserInformation = async () => {
+    const data: IUser[] = [];
+    //await firestore()
+    //   .collection('users')
+    //   .add({
+    //     user_id: userId,
+    //     user_name: userLogin,
+    //     first_name: userFirstName,
+    //     last_name: userLastName,
+    //     about_user: aboutUserText,
+    //     avatar_url: image.image.uri,
+    //     location: {
+    //       city: userCity,
+    //       country: userCountry,
+    //     },
+    //   })
+    //   .then(() => {
+    //     console.log('User added!');
+    //   });
+    console.log('User added!');
+    await firestore()
+      .collection('users')
+      .where('user_id', '==', `${userId}`)
+      .get()
+      .then(response => {
+        response.forEach((doc: any) => {
+          data.push({ _id: doc.id });
+        });
+        const location = {
+          city: userCity,
+          country: userCountry,
+        };
+        dispatch(
+          setAllUserData(
+            userId,
+            data[0]._id,
+            userLogin,
+            userFirstName,
+            userLastName,
+            aboutUserText,
+            image.uri,
+            location,
+          ),
+        );
+      });
   };
 
-  const changeUserFirstName = (name: string) => {
-    setUserFirstName(name);
+  const changeUserFirstName = (text: string) => {
+    setUserFirstName(text);
+  };
+
+  const changeUserLastName = (text: string) => {
+    setUserLastName(text);
   };
 
   const changeAboutUserTextInfo = (text: string) => {
     setAboutUserText(text);
   };
 
-  const textInputModalNavigation = () => {
+  const changeUserLocationText = () => {
+    console.log(2);
+  };
+
+  const userInfoModalScreen = () => {
     navigation.navigate('TextInputModalScreen', {
       textValue: aboutUserText,
+      textLabel: 'About you',
+      placeholder: 'About you',
     });
   };
 
-  console.log('name', aboutUserText);
+  const locationInputModalNavigation = () => {
+    navigation.navigate('SetUserLocationModalScreen', {
+      city: userCity,
+      country: userCountry,
+    });
+  };
+
+  const userLocationTextValue = setTextInputUserLocationValue();
 
   return (
     <View style={styles.screenContainer}>
@@ -99,7 +277,13 @@ export const SignUpProfileScreen: React.FC<SignInScreenProps> = ({ navigation, r
         />
         <View style={styles.authentificationContainer}>
           <View style={styles.userImageContainer}>
-            {/* <Image /> */}
+            <Image
+              source={{
+                width: image.width,
+                height: image.height,
+                uri: image.uri,
+              }}
+            />
           </View>
 
           <View style={changeAvatarButtonStyle.buttonContainerStyle}>
@@ -107,11 +291,11 @@ export const SignUpProfileScreen: React.FC<SignInScreenProps> = ({ navigation, r
               buttonStyle={changeAvatarButtonStyle.buttonStyle}
               buttonTextStyle={changeAvatarButtonStyle.buttonTextStyle}
               buttonText={'Change your avatar'}
-              onPressHandler={test}
+              onPressHandler={onButtonPress}
             />
           </View>
           <View>
-            <Text>{111}</Text>
+            <Text>{userLogin}</Text>
           </View>
           <View style={styles.textInputWrapper}>
             <ProfileTextInput
@@ -124,7 +308,7 @@ export const SignUpProfileScreen: React.FC<SignInScreenProps> = ({ navigation, r
             <ProfileTextInput
               textLabel={'Surname'}
               placeholder={'Surname'}
-              onChangeTextHandler={changeUserFirstName}
+              onChangeTextHandler={changeUserLastName}
             />
           </View>
           <View style={styles.textInputWrapper}>
@@ -132,14 +316,28 @@ export const SignUpProfileScreen: React.FC<SignInScreenProps> = ({ navigation, r
               textLabel={'About you'}
               placeholder={'About you'}
               onChangeTextHandler={changeAboutUserTextInfo}
-              onFocusHandler={textInputModalNavigation}
+              onFocusHandler={userInfoModalScreen}
               value={aboutUserText}
             />
           </View>
+          <View style={styles.textInputWrapper}>
+            <ProfileModalTextInput
+              textLabel={'Your location'}
+              placeholder={'Your location'}
+              onChangeTextHandler={changeUserLocationText}
+              onFocusHandler={locationInputModalNavigation}
+              value={userLocationTextValue}
+            />
+          </View>
+          <View style={signInButtonStyle.buttonContainerStyle}>
+            <CustomButton
+              buttonStyle={signInButtonStyle.buttonStyle}
+              buttonTextStyle={signInButtonStyle.buttonTextStyle}
+              buttonText={'Confirm'}
+              onPressHandler={submitUserInformation}
+            />
+          </View>
         </View>
-
-
-
       </ImageBackground>
     </View>
   );
@@ -164,7 +362,7 @@ const styles = StyleSheet.create({
   authentificationContainer: {
     width: '100%',
     height: '100%',
-    paddingTop: Number(StatusBar.currentHeight) + 60,
+    paddingTop: Number(StatusBar.currentHeight) + 40,
     paddingHorizontal: 20,
     paddingVertical: 30,
     backgroundColor: 'rgba(255, 255, 255, 1)',
@@ -183,37 +381,20 @@ const styles = StyleSheet.create({
     width: 140,
     height: 140,
     borderRadius: 70,
-    backgroundColor: 'red',
+    overflow: 'hidden',
   },
 });
 
-
-const textInputStyle = StyleSheet.create<ItextInputStyle>({
-  insideWrapper: {
-    borderRadius: 0,
-    borderColor: THEME.darkGray,
-    borderBottomWidth: 1,
-    backgroundColor: 'transparent',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
-    paddingVertical: 0,
-
+const signInButtonStyle = StyleSheet.create<ICustomButtonStyle>({
+  buttonContainerStyle: {
+    width: '90%',
+    marginTop: 60,
   },
-  imageContainer: {
-    paddingHorizontal: 5,
-    paddingVertical: 0,
+  buttonStyle: {
+    backgroundColor: THEME.mainColor,
   },
-  textInput: {
-    alignSelf: 'flex-start',
-    flexGrow: 1,
-    flexShrink: 1,
-    fontSize: 16,
-  },
-  alertStyle: {
-    backgroundColor: 'rgba(255, 0, 0, 0.1)',
-    borderColor: 'red',
-    borderWidth: 1,
+  buttonTextStyle: {
+    color: THEME.whiteColor,
   },
 });
 

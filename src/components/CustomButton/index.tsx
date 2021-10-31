@@ -1,25 +1,10 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, TextStyle, ViewStyle } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 
-import { THEME } from '../theme';
+import { THEME } from '../../theme';
+import { IStyle, ICustomButton } from './interface';
 
-type IStyle = {
-  buttonStyle: ViewStyle;
-  buttonTextStyle: TextStyle;
-  disabledStyle: ViewStyle;
-};
-
-interface ICustomButton {
-  buttonText: string;
-  onPressHandler: () => void;
-  buttonStyle?: ViewStyle;
-  buttonTextStyle?: TextStyle;
-  disabled?: boolean;
-}
-
-type IbuttonProps = ICustomButton;
-
-export const CustomButton: React.FC<IbuttonProps> = (props): JSX.Element => {
+export const CustomButton: React.FC<ICustomButton> = (props): JSX.Element => {
   return (
     <TouchableOpacity
       disabled={props.disabled}

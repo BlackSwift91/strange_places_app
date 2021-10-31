@@ -1,13 +1,22 @@
-import React from 'react';
-import { Button, Text } from 'react-native';
-import { createStackNavigator, HeaderStyleInterpolators, TransitionSpecs } from '@react-navigation/stack';
+import React, { useState, useEffect } from 'react';
+
+import {
+  createStackNavigator,
+  HeaderStyleInterpolators,
+  TransitionSpecs,
+} from '@react-navigation/stack';
+import { useSelector } from 'react-redux';
+import auth from '@react-native-firebase/auth';
+
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 // import { AboutScreen } from '../screens/AboutScreen';
 import { StartScreen } from '../screens/StartScreen';
 import { SignInScreen } from '../screens/SignInScreen';
 import { SignUpScreen } from '../screens/SignUpScreen';
+import { AboutScreen } from '../screens/AboutScreen';
 import { SignUpProfileScreen } from '../screens/SignUpProfileScreen';
 import { TextInputModalScreen } from '../screens/TextInputModalScreen';
+import { SetUserLocationModalScreen } from '../screens/SetUserLocationModalScreen';
 // import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
 // import { NavigationButton } from '../components/NavigationButton';
@@ -39,57 +48,99 @@ const horizontalAnimation = {
 };
 
 export const AppNavigator: React.FC = () => {
+  const st = useSelector((state) => state.authDataReducer);
+  const [user, setUser] = useState();
+  const [initializing, setInitializing] = useState(true);
+  console.log('st', st);
+  
+  function onAuthStateChanged(user) {
+    console.log('user', user);
+    setUser(user);
+    if (initializing) setInitializing(false);
+  }
+
+  useEffect(() => {
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber; // unsubscribe on unmount
+  }, []);
+
+  if (initializing) return null;
+
+  if (!user) {
+    return (
+      // <Stack.Navigator screenOptions={horizontalAnimation}>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="StartScreen"
+          component={StartScreen}
+          options={{
+            headerShown: false,
+            presentation: 'card',
+          }}
+        />
+        <Stack.Screen
+          name="SignInScreen"
+          component={SignInScreen}
+          options={{
+            title: 'Sign In',
+            headerMode: 'screen',
+            headerTintColor: 'white',
+            headerTransparent: true,
+          }}
+        />
+        <Stack.Screen
+          name="SignUpScreen"
+          component={SignUpScreen}
+          options={{
+            title: 'Sign Up',
+            headerTintColor: 'white',
+            headerTransparent: true,
+          }}
+        />
+        <Stack.Screen
+          name="SignUpProfileScreen"
+          component={SignUpProfileScreen}
+          options={{
+            title: 'Edit your profile',
+            headerTintColor: 'white',
+            headerTransparent: true,
+            headerLeft: () => null,
+          }}
+        />
+        <Stack.Screen
+          name="TextInputModalScreen"
+          component={TextInputModalScreen}
+          options={() => ({
+            presentation: 'modal',
+            title: 'Test',
+            headerTintColor: 'blue',
+            headerTransparent: true,
+          })}
+        />
+        <Stack.Screen
+          name="SetUserLocationModalScreen"
+          component={SetUserLocationModalScreen}
+          options={() => ({
+            presentation: 'modal',
+            title: 'Test',
+            headerTintColor: 'blue',
+            headerTransparent: true,
+          })}
+        />
+      </Stack.Navigator>
+    );
+  }
   return (
-    // <Stack.Navigator screenOptions={horizontalAnimation}>
     <Stack.Navigator>
       <Stack.Screen
-        name="StartScreen"
-        component={StartScreen}
-        options={{
-          headerShown: false,
-          presentation: 'card',
-        }}
-      />
-      <Stack.Screen
-        name="SignInScreen"
-        component={SignInScreen}
+        name="AboutScreen"
+        component={AboutScreen}
         options={{
           title: 'Sign In',
           headerMode: 'screen',
           headerTintColor: 'white',
           headerTransparent: true,
-
-          // presentation: 'modal',
         }}
-      />
-      <Stack.Screen
-        name="SignUpScreen"
-        component={SignUpScreen}
-        options={{
-          title: 'Sign Up',
-          headerTintColor: 'white',
-          headerTransparent: true,
-        }}
-      />
-      <Stack.Screen
-        name="SignUpProfileScreen"
-        component={SignUpProfileScreen}
-        options={{
-          title: 'Edit your profile',
-          headerTintColor: 'white',
-          headerTransparent: true,
-          headerLeft: () => null,
-        }}
-      />
-      <Stack.Screen
-        name="TextInputModalScreen"
-        component={TextInputModalScreen}
-        options={({ navigation, route }) => ({
-          presentation: 'modal',
-          title: 'Test',
-          headerTintColor: 'blue',
-          headerTransparent: true,
-        })}
       />
     </Stack.Navigator>
   );

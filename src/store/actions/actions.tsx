@@ -1,19 +1,59 @@
-export type LoginAction =
+export type UserActions =
   | { type: 'SET_UNIQUE_USER_ID'; payload: string }
   | { type: 'SET_UNIQUE_USER_ID_DB_FIELD'; payload: string }
-  | { type: 'SET_USER_AVATAR'; payload: string };
+  | {
+      type: 'SET_ALL_USER_DATA';
+      payload: {
+        _id: string;
+        about_user: string;
+        avatar_url: string;
+        first_name: string;
+        last_name: string;
+        location: {
+          city: string;
+          country: string;
+        };
+        user_id: string;
+        user_name: string;
+      };
+    };
 
-export function setUniqueUserId(user_id: string): LoginAction {
+export type LoginActions =
+  | { type: 'IS_NEW_USER'; payload: boolean }
+  | { type: 'TEST'; payload: string };
+
+export function setAllUserData(
+  user_id: string,
+  _id: string,
+  user_name: string,
+  first_name: string,
+  last_name: string,
+  about_user: string,
+  avatar_url: string,
+  location: {
+    city: string;
+    country: string;
+  },
+): UserActions {
   return {
-    type: 'SET_UNIQUE_USER_ID',
-    payload: user_id,
+    type: 'SET_ALL_USER_DATA',
+    payload: {
+      _id,
+      about_user,
+      avatar_url,
+      first_name,
+      last_name,
+      location,
+      user_id,
+      user_name,
+    },
   };
 }
 
-export function setUserAvatar(avatar_url: string): LoginAction {
+export function setIsNewUser(user_id: boolean): LoginActions {
   return {
-    type: 'SET_USER_AVATAR',
-    payload: avatar_url,
+    type: 'IS_NEW_USER',
+    payload: user_id,
   };
 }
 

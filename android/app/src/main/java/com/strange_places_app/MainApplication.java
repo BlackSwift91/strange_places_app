@@ -1,5 +1,6 @@
 package com.strange_places_app;
 
+import org.reactnative.camera.RNCameraPackage;
 import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
@@ -9,7 +10,7 @@ import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
 import java.lang.reflect.InvocationTargetException;
-import org.reactnative.camera.RNCameraPackage;
+
 import java.util.List;
 
 public class MainApplication extends Application implements ReactApplication {

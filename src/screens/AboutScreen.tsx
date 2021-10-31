@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
 export const AboutScreen = ({navigation, route}) => {
-  console.log('1111');
+  // console.log('1111');
 
   return (
     <View style={styles.center}>

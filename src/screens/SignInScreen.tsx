@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   StyleSheet,
@@ -12,27 +12,22 @@ import {
   ImageStyle,
   TextStyle,
 } from 'react-native';
-import { useDispatch } from 'react-redux';
-import { StackNavigationProp } from '@react-navigation/stack';
+import firestore from '@react-native-firebase/firestore';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-// import auth from '@react-native-firebase/auth';
+import { setAllUserData } from '../store/actions/actions';
+import auth from '@react-native-firebase/auth';
+import { useDispatch } from 'react-redux';
 
 import { THEME } from '../theme';
 import { CustomButton } from '../components/CustomButton';
-import { userNameChangeInput, userPasswordChangeInput } from '../store/actions/actions';
-
-import { DB } from '../../sglib.config';
-
-import { AuthStackNavigatorParamsList } from '../interfaces/INavigation';
+import { AlertText } from '../components/AlertText';
+import { ISignInScreenProps } from '../interfaces/INavigation';
 
 interface IProps {
   screenContainer: ViewStyle;
   backgroundImage: ImageStyle;
   authentificationContainer: ImageStyle;
   userLoginTextInputContainer: ViewStyle;
-  textInputContainer: ViewStyle;
-  inputIconContainer: ViewStyle;
-  inputStyle: ViewStyle;
   userPasswordTextInputContainer: ViewStyle;
 }
 
@@ -42,62 +37,124 @@ interface ICustomButtonStyle {
   buttonTextStyle: TextStyle;
 }
 
-interface SignInScreenProps {
-  navigation: StackNavigationProp<AuthStackNavigatorParamsList, 'SignInScreen'>;
+interface ItextInputStyle {
+  insideWrapper: ViewStyle;
+  imageContainer: ViewStyle;
+  textInput: ViewStyle;
+  alertStyle?: ViewStyle;
 }
 
-export const SignInScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
+export interface IUser {
+  _id: string;
+  about_user: string;
+  avatar_url: string;
+  first_name: string;
+  last_name: string;
+  location: {
+    city: string;
+    country: string;
+  };
+  user_id: string;
+  user_name: string;
+}
+
+export const SignInScreen: React.FC<ISignInScreenProps> = ({ navigation }) => {
+  const dispatch = useDispatch();
   const userNameInputRef = useRef<TextInput>(null);
   const userPasswordInputRef = useRef<TextInput>(null);
-  const dispatch = useDispatch();
-  const [userName, setUserName] = useState<string>('');
+  const [userLogin, setUserLogin] = useState<string>('');
   const [userPassword, setUserPassword] = useState<string>('');
   const [passwordVisible, setPasswordVisible] = useState<boolean>(true);
 
-  useEffect(() => {
-    (async () => {
-      const result = await DB.users.getAllUsers();
-      console.log(result);
-    })();
-  }, []);
+  const [errorDescription, setErrorDescription] = useState<string>('');
+  const [loginError, setLoginError] = useState<Boolean>(false);
+  const [passwordError, setPasswordError] = useState<Boolean>(false);
 
   const test = () => {
-    console.log('1111122');
+    if (userPassword === '') {
+      formValidation();
+      return;
+    }
+    formValidation();
+    const user: IUser[] = [];
+    auth()
+      .signInWithEmailAndPassword(userLogin, userPassword)
+      .then(result => {
+        console.log('User account created & signed in!');
+        console.log(result.user.uid);
+        setPasswordError(false);
+        setLoginError(false);
+        changeErrorDescription('');
+
+        firestore()
+          .collection('users')
+          .where('user_id', '==', `${result.user.uid}`)
+          .get()
+
+          .then(response => {
+            console.log(response);
+            response.forEach((doc: any) => {
+              user.push({ ...doc.data(), _id: doc.id });
+            });
+            const location = {
+              city: user[0].location.city,
+              country: user[0].location.country,
+            };
+            dispatch(
+              setAllUserData(
+                user[0].user_id,
+                user[0]._id,
+                user[0].user_name,
+                user[0].first_name,
+                user[0].last_name,
+                user[0].about_user,
+                user[0].avatar_url,
+                location,
+              ),
+            );
+          });
+      })
+      .catch(error => {
+        if (error.code === 'auth/user-not-found') {
+          console.log('That email address is invalid!');
+          changeErrorDescription('This email address is invalid!');
+
+          setLoginError(true);
+        } else if (error.code === 'auth/wrong-password') {
+          setLoginError(false);
+          setPasswordError(true);
+          changeErrorDescription('Wrong password!');
+          // navigation.navigate('SignUpProfileScreen');
+        }
+      });
   };
-
-  useEffect(() => {
-    dispatch(userNameChangeInput(userName));
-  }, [dispatch, userName]);
-
-  useEffect(() => {
-    dispatch(userPasswordChangeInput(userPassword));
-  }, [dispatch, userPassword]);
 
   const navToSignUpScreen = async () => {
     await Keyboard.dismiss();
     navigation.navigate('SignUpScreen');
   };
 
-  // useEffect(() => {
-  //   userNameInputRef.current?.focus();
-  // }, []);
+  const changeErrorDescription = (error: string) => {
+    setErrorDescription(error);
+  };
 
-  // auth()
-  //   .createUserWithEmailAndPassword('jane.doe@example.com', 'SuperSecretPassword!')
-  //   .then(() => {
-  //     console.log('User account created & signed in!');
-  //   })
-  //   .catch(error => {
-  //     if (error.code === 'auth/email-already-in-use') {
-  //       console.log('That email address is already in use!');
-  //     }
-
-  //     if (error.code === 'auth/invalid-email') {
-  //       console.log('That email address is invalid!');
-  //     }
-
-  //     console.error(error);
-  //   });
+  const formValidation = () => {
+    if (userLogin === '') {
+      setLoginError(true);
+      changeErrorDescription('Please input youl email');
+      return;
+    } else if (userLogin !== '') {
+      setLoginError(false);
+      changeErrorDescription('');
+    }
+    if (userPassword.length < 6) {
+      setPasswordError(true);
+      changeErrorDescription('The password must be at least six symbols');
+    } else {
+      setPasswordError(false);
+      changeErrorDescription('');
+    }
+  };
 
   return (
     <View style={styles.screenContainer}>
@@ -113,8 +170,16 @@ export const SignInScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
         />
         <View style={styles.authentificationContainer}>
           <View style={styles.userLoginTextInputContainer}>
-            <View style={styles.textInputContainer}>
-              <View style={styles.inputIconContainer}>
+            <View
+              style={
+                loginError
+                  ? {
+                    ...textInputStyle.insideWrapper,
+                    ...textInputStyle.alertStyle,
+                  }
+                  : textInputStyle.insideWrapper
+              }>
+              <View style={textInputStyle.imageContainer}>
                 <MaterialCommunityIcons name="account" color={THEME.darkGray} size={24} />
               </View>
 
@@ -124,9 +189,9 @@ export const SignInScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
                 maxLength={30}
                 autoCapitalize="none"
                 placeholder="User Name"
-                style={styles.inputStyle}
-                onChangeText={val => setUserName(val)}
-                value={userName}
+                style={textInputStyle.textInput}
+                onChangeText={val => setUserLogin(val)}
+                value={userLogin}
                 onSubmitEditing={() => {
                   userPasswordInputRef.current?.focus();
                 }}
@@ -136,27 +201,36 @@ export const SignInScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
           </View>
 
           <View style={styles.userPasswordTextInputContainer}>
-            <View style={styles.textInputContainer}>
-              <View style={styles.inputIconContainer}>
+            <View
+              style={
+                passwordError
+                  ? {
+                    ...textInputStyle.insideWrapper,
+                    ...textInputStyle.alertStyle,
+                  }
+                  : textInputStyle.insideWrapper
+              }>
+              <View style={textInputStyle.imageContainer}>
                 <MaterialCommunityIcons name="lock" color={THEME.darkGray} size={24} />
               </View>
               <TextInput
                 autoCapitalize="none"
                 secureTextEntry={passwordVisible}
                 placeholder="Password"
-                style={styles.inputStyle}
+                style={textInputStyle.textInput}
                 onChangeText={val => setUserPassword(val)}
                 value={userPassword}
                 ref={userPasswordInputRef}
+                onEndEditing={() => formValidation()}
               />
               <TouchableOpacity
-                style={styles.inputIconContainer}
+                style={textInputStyle.imageContainer}
                 onPress={() => setPasswordVisible(prev => !prev)}>
                 <MaterialCommunityIcons name="eye" color={THEME.darkGray} size={24} />
               </TouchableOpacity>
             </View>
           </View>
-
+          <AlertText text={errorDescription} />
           <View style={signInButtonStyle.buttonContainerStyle}>
             <CustomButton
               buttonStyle={signInButtonStyle.buttonStyle}
@@ -221,23 +295,31 @@ const styles = StyleSheet.create<IProps>({
     marginTop: 10,
     flexDirection: 'row',
   },
-  textInputContainer: {
+});
+
+const textInputStyle = StyleSheet.create<ItextInputStyle>({
+  insideWrapper: {
     borderRadius: 10,
     borderColor: THEME.lightGray,
-    borderWidth: 3,
+    borderWidth: 1,
     backgroundColor: THEME.lightGray,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
   },
-  inputIconContainer: {
+  imageContainer: {
     paddingHorizontal: 5,
   },
-  inputStyle: {
+  textInput: {
     alignSelf: 'flex-start',
     flexGrow: 1,
     flexShrink: 1,
+  },
+  alertStyle: {
+    backgroundColor: 'rgba(255, 0, 0, 0.1)',
+    borderColor: 'red',
+    borderWidth: 1,
   },
 });
 

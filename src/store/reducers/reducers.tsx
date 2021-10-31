@@ -1,15 +1,7 @@
-import { SET_UNIQUE_USER_ID, SET_USER_AVATAR } from '../types';
-import { LoginAction } from '../actions/actions';
+import { SET_UNIQUE_USER_ID, SET_ALL_USER_DATA, IS_NEW_USER } from '../types';
+import { UserActions, LoginActions } from '../actions/actions';
 // import { ILoginState } from '../../interfaces/ILoginState';
 // import { IUserData } from '../../interfaces/IUserData';
-
-interface ILoginState {
-  isLoading: boolean;
-  isSignout: boolean;
-  userToken: null | string;
-  error: null | string;
-  userData: IUserData;
-}
 
 interface IUserData {
   _id: string;
@@ -17,53 +9,64 @@ interface IUserData {
   avatar_url: string;
   first_name: string;
   last_name: string;
-  location: string;
+  location: {
+    city: string;
+    country: string;
+  };
   user_id: string;
   user_name: string;
-  token: string;
 }
 
-const user: IUserData = {
+const initialState: IUserData = {
   _id: '',
   about_user: '',
   avatar_url: '',
   first_name: '',
   last_name: '',
-  location: '',
+  location: {
+    city: '',
+    country: '',
+  },
   user_id: '',
   user_name: '',
-  token: '',
 };
 
-const initialState: ILoginState = {
-  userData: user,
-  isLoading: false,
-  isSignout: true,
-  userToken: null,
-  error: null,
-};
-
-export const authDataReducer = (state = initialState, action: LoginAction): ILoginState => {
+export const userDataReducer = (state = initialState, action: UserActions): IUserData => {
+  console.log('reducer');
+  console.log(action.type);
   switch (action.type) {
     case SET_UNIQUE_USER_ID:
       console.log('UID', action.payload);
+      return { ...state, user_id: action.payload };
+    case SET_ALL_USER_DATA:
+      console.log('SALUD', action.payload);
       return {
         ...state,
-        userData: {
-          ...state.userData,
-          user_id: action.payload,
+        _id: action.payload._id,
+        about_user: action.payload.about_user,
+        avatar_url: action.payload.avatar_url,
+        first_name: action.payload.first_name,
+        last_name: action.payload.last_name,
+        user_id: action.payload.user_id,
+        user_name: action.payload.user_name,
+        location: {
+          city: action.payload.location.city,
+          country: action.payload.location.country,
         },
       };
+    default:
+      state;
+  }
+  return state;
+};
 
-    case SET_USER_AVATAR:
-      console.log('SET_USER_AVATAR', action.payload);
-      return {
-        ...state,
-        userData: {
-          ...state.userData,
-          avatar_url: action.payload,
-        },
-      };
+export const authDataReducer = (state = false, action: LoginActions) => {
+  console.log('reducer auth');
+  console.log(action.type);
+  switch (action.type) {
+    case IS_NEW_USER:
+      console.log('UID', action.payload);
+      return { state: action.payload };
     default:
       state;
   }

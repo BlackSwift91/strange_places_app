@@ -10,21 +10,18 @@ import {
   TextInput,
   ViewStyle,
   ImageStyle,
-  TextStyle,
 } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
-import { StackNavigationProp } from '@react-navigation/stack';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import auth from '@react-native-firebase/auth';
 
 import { THEME } from '../theme';
 import { CustomButton } from '../components/CustomButton';
+import { ICustomButtonStyle } from '../interfaces/ICustomButtonStyle';
 import { AlertText } from '../components/AlertText';
 
 import { DB } from '../../sglib.config';
-import { setUniqueUserId } from '../store/actions/actions';
 
-import { AuthStackNavigatorParamsList } from '../interfaces/INavigation';
+import { SignUpScreenProps } from '../interfaces/INavigation';
 
 interface IProps {
   screenContainer: ViewStyle;
@@ -41,17 +38,27 @@ interface ItextInputStyle {
   alertStyle?: ViewStyle;
 }
 
-interface ICustomButtonStyle {
-  buttonContainerStyle: ViewStyle;
-  buttonStyle: ViewStyle;
-  buttonTextStyle: TextStyle;
-}
+// {
+//   "additionalUserInfo": {
+//     "isNewUser": true
+//   },
+//   "user": {
+//     "displayName": null,
+//     "email": "andrey1@gmail.com",
+//     "emailVerified": false,
+//     "isAnonymous": false,
+//     "metadata": [Object],
+//     "phoneNumber": null,
+//     "photoURL": null,
+//     "providerData": [Array],
+//     "providerId": "firebase",
+//     "tenantId": null,
+//     "uid": "esDQxltpq8eeIb0iJZQorwhLWOv2"
+//   }
+// }
 
-interface SignInScreenProps {
-  navigation: StackNavigationProp<AuthStackNavigatorParamsList, 'SignInScreen'>;
-}
-
-export const SignUpScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
+export const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
+  const st = useSelector((state) => state.authDataReducer);
   const userNameInputRef = useRef<TextInput>(null);
   const userPasswordInputRef = useRef<TextInput>(null);
   const userRepeatPasswordInputRef = useRef<TextInput>(null);
@@ -62,25 +69,16 @@ export const SignUpScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
   const [passwordVisible, setPasswordVisible] = useState<boolean>(true);
 
   const [errorDescription, setErrorDescription] = useState<string>('');
-  const [userId, setUserId] = useState<string>('');
   const [loginError, setLoginError] = useState<Boolean>(false);
   const [passwordError, setPasswordError] = useState<Boolean>(false);
-  // const [error, setError] = useState<Boolean>(false);
-  const dispatch = useDispatch();
 
   useEffect(() => {
     (async () => {
       const result = await DB.users.getAllUsers();
-      console.log(result);
+      // console.log(result);
     })();
   }, []);
 
-  useEffect(() => {
-    dispatch(setUniqueUserId(userId));
-  }, [dispatch, userId]);
-
-  // const userDocument = await firestore().collection('users').get();
-  // console.log('my da', userDocument._changes);
   const userSignUp = async () => {
     // if (userPassword === '') {
     //   formValidation();
@@ -90,36 +88,40 @@ export const SignUpScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
     changeErrorDescription(' ');
 
     auth()
-      .signInWithEmailAndPassword('test4@gmail.com', '11111111')
+      // .signInWithEmailAndPassword('test4@gmail.com', '11111111')
+      // .then(res => {
+      //   console.log('User account created & signed in!');
+      //   navigation.navigate('SignUpProfileScreen', {
+      //     user_name: 'test4@gmail.com',
+      //     user_id: res.user.uid,
+      //   });
+      // })
+      // .catch(error => {
+      //   console.log(error);
+      // });
+
+      .createUserWithEmailAndPassword('andrey4@gmail.com', '11111111')
       .then(res => {
-        setUserId(res.user.uid);
-      })
-      .then(() => {
         console.log('User account created & signed in!');
-        navigation.navigate('SignUpProfileScreen');
+        console.log('signup', res);
+        navigation.navigate('SignUpProfileScreen', {
+          user_name: 'test4@gmail.com',
+          user_id: res.user.uid,
+        });
       })
       .catch(error => {
+        if (error.code === 'auth/email-already-in-use') {
+          setLoginError(true);
+          changeErrorDescription('This email address is already in use!');
+          // navigation.navigate('SignUpProfileScreen');
+        }
+        if (error.code === 'auth/invalid-email') {
+          // console.log('That email address is invalid!');
+          setLoginError(true);
+          changeErrorDescription('This email address is invalid!');
+        }
         console.log(error);
       });
-
-    // .createUserWithEmailAndPassword('test4@gmail.com', userPassword)
-    //  
-    // .then(() => {
-    //   console.log('User account created & signed in!');
-    // })
-    // .catch(error => {
-    //   if (error.code === 'auth/email-already-in-use') {
-    //     setLoginError(true);
-    //     changeErrorDescription('This email address is already in use!');
-    //     navigation.navigate('SignUpProfileScreen');
-    //   }
-    //   if (error.code === 'auth/invalid-email') {
-    //     // console.log('That email address is invalid!');
-    //     setLoginError(true);
-    //     changeErrorDescription('This email address is invalid!');
-    //   }
-    //   console.log(error);
-    // });
   };
 
   const changeErrorDescription = (error: string) => {
@@ -427,10 +429,3 @@ const restorePasswordButtonStyle = StyleSheet.create<ICustomButtonStyle>({
     fontWeight: 'normal',
   },
 });
-
-// useEffect(() => {
-//   userNameInputRef.current?.focus();
-// }, []);
-// useEffect(() => {
-//   dispatch(userNameChangeInput(userLogin));
-// }, [dispatch, userName]);

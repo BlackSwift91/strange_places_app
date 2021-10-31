@@ -5,6 +5,10 @@
 
     <!-- Required -->
     <uses-permission android:name="android.permission.CAMERA" />
+    
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.front" android:required="false" />
+
 
     <!-- Include this only if you are planning to use the camera roll -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />

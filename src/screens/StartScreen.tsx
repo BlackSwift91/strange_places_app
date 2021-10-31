@@ -10,44 +10,21 @@ import {
   TextStyle,
   ImageStyle,
 } from 'react-native';
-import { StackNavigationProp } from '@react-navigation/stack';
-
-import { CustomButton } from '../components/CustomButton';
 
 import { THEME } from '../theme';
+import { StartScreenProps } from '../interfaces/INavigation';
 
-import { AuthStackNavigatorParamsList } from '../interfaces/INavigation';
+import { CustomButton } from '../components/CustomButton';
+import { ICustomButtonStyle } from '../interfaces/ICustomButtonStyle';
 
 interface IProps {
   screenWrapper: ViewStyle;
-  logoContainer: ViewStyle;
   authentificationContainer: ViewStyle;
-
-  signInContainer: ViewStyle;
-  signUpContainer: ViewStyle;
-  signInButton: ViewStyle;
-  signUpButton: ViewStyle;
-  signUpButtonText: TextStyle;
-  signInButtonText: TextStyle;
-
+  logoContainer: ViewStyle;
   logo: ImageStyle;
-  image: ImageStyle;
-  buttonStyle: ViewStyle;
-
+  backgroundImage: ImageStyle;
   h1TextStyle: TextStyle;
   h2TextStyle: TextStyle;
-  restorePasswordContainer: TextStyle;
-  restorePasswordButton: TextStyle;
-  restorePasswordButtonText: TextStyle;
-}
-
-type Style = {
-  buttonStyle: ViewStyle;
-  buttonTextStyle: TextStyle;
-};
-
-interface StartScreenProps {
-  navigation: StackNavigationProp<AuthStackNavigatorParamsList, 'StartScreen'>;
 }
 
 export const StartScreen: React.FC<StartScreenProps> = ({ navigation }) => {
@@ -58,8 +35,8 @@ export const StartScreen: React.FC<StartScreenProps> = ({ navigation }) => {
     navigation.navigate('SignUpScreen');
   };
 
-  const test = () => {
-    console.log('test');
+  const restorePassword = () => {
+    console.log('restore password');
   };
 
   return (
@@ -67,7 +44,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({ navigation }) => {
       <ImageBackground
         source={require('../images/StartScreenImg.jpg')}
         resizeMode="cover"
-        style={styles.image}>
+        style={styles.backgroundImage}>
         <StatusBar
           animated={true}
           backgroundColor="transparent"
@@ -83,29 +60,29 @@ export const StartScreen: React.FC<StartScreenProps> = ({ navigation }) => {
             Travel, discover and share amazing places around you
           </Text>
 
-          <View style={styles.signInContainer}>
+          <View style={signInButtonStyle.buttonContainerStyle}>
             <CustomButton
-              buttonStyle={styles.buttonStyle}
-              buttonTextStyle={styles.signInButtonText}
+              buttonStyle={signInButtonStyle.buttonStyle}
+              buttonTextStyle={signInButtonStyle.buttonTextStyle}
               buttonText={'Sign In'}
               onPressHandler={navToSignInScreen}
             />
           </View>
 
-          <View style={styles.signUpContainer}>
+          <View style={signUpButtonStyle.buttonContainerStyle}>
             <CustomButton
-              buttonStyle={styles.signUpButton}
-              buttonTextStyle={styles.signUpButtonText}
+              buttonStyle={signUpButtonStyle.buttonStyle}
+              buttonTextStyle={signUpButtonStyle.buttonTextStyle}
               buttonText={'Sign Up'}
               onPressHandler={navToSignUpScreen}
             />
           </View>
-          <View style={styles.restorePasswordContainer}>
+          <View style={restorePasswordContainer.buttonContainerStyle}>
             <CustomButton
-              buttonStyle={styles.restorePasswordButton}
-              buttonTextStyle={styles.restorePasswordButtonText}
+              buttonStyle={restorePasswordContainer.buttonStyle}
+              buttonTextStyle={restorePasswordContainer.buttonTextStyle}
               buttonText={'Restore password'}
-              onPressHandler={test}
+              onPressHandler={restorePassword}
             />
           </View>
         </View>
@@ -113,6 +90,55 @@ export const StartScreen: React.FC<StartScreenProps> = ({ navigation }) => {
     </View>
   );
 };
+
+const signUpButtonStyle = StyleSheet.create<ICustomButtonStyle>({
+  buttonContainerStyle: {
+    width: '90%',
+    marginTop: 10,
+  },
+  buttonStyle: {
+    backgroundColor: THEME.whiteColor,
+  },
+  buttonTextStyle: {
+    color: THEME.mainColor,
+  },
+});
+
+const signInButtonStyle = StyleSheet.create<ICustomButtonStyle>({
+  buttonContainerStyle: {
+    width: '90%',
+    marginTop: 30,
+  },
+  buttonStyle: {
+    backgroundColor: THEME.mainColor,
+  },
+  buttonTextStyle: {
+    color: THEME.whiteColor,
+  },
+});
+
+const restorePasswordContainer = StyleSheet.create<ICustomButtonStyle>({
+  buttonContainerStyle: {
+    paddingTop: 12,
+    width: 150,
+  },
+  buttonStyle: {
+    textAlign: 'center',
+    backgroundColor: THEME.whiteColor,
+    borderColor: 'white',
+    elevation: 0,
+    paddingHorizontal: 0,
+    paddingVertical: 0,
+    borderRadius: 0,
+    borderWidth: 0,
+  },
+  buttonTextStyle: {
+    color: THEME.mainColor,
+    fontSize: 15,
+    lineHeight: 24,
+    fontWeight: 'normal',
+  },
+});
 
 const styles = StyleSheet.create<IProps>({
   screenWrapper: {
@@ -136,39 +162,14 @@ const styles = StyleSheet.create<IProps>({
     backgroundColor: THEME.whiteColor,
     alignItems: 'center',
   },
-
-  signInContainer: {
-    width: '90%',
-    marginTop: 30,
-  },
-  signUpContainer: {
-    width: '90%',
-  },
-  signInButton: {
-    backgroundColor: THEME.mainColor,
-  },
-  signUpButton: {
-    marginTop: 10,
-    backgroundColor: THEME.whiteColor,
-  },
-  signUpButtonText: {
-    color: THEME.mainColor,
-  },
-  signInButtonText: {
-    color: THEME.whiteColor,
-  },
-
   logo: {
     width: 96,
     height: 96,
   },
-  image: {
+  backgroundImage: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'space-between',
-  },
-  buttonStyle: {
-    backgroundColor: THEME.mainColor,
   },
   h1TextStyle: {
     color: 'black',
@@ -181,25 +182,5 @@ const styles = StyleSheet.create<IProps>({
     lineHeight: 24,
     paddingTop: 10,
     textAlign: 'center',
-  },
-  restorePasswordContainer: {
-    paddingTop: 12,
-    width: 150,
-  },
-  restorePasswordButton: {
-    textAlign: 'center',
-    backgroundColor: THEME.whiteColor,
-    borderColor: 'white',
-    elevation: 0,
-    paddingHorizontal: 0,
-    paddingVertical: 0,
-    borderRadius: 0,
-    borderWidth: 0,
-  },
-  restorePasswordButtonText: {
-    color: THEME.mainColor,
-    fontSize: 15,
-    lineHeight: 24,
-    fontWeight: 'normal',
   },
 });

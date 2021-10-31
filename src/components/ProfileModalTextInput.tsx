@@ -60,4 +60,4 @@ const styles = StyleSheet.create<IProfileTextInputStyle>({
     borderColor: 'red',
     borderWidth: 1,
   },
-})
+});
