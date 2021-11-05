@@ -18,6 +18,8 @@ import { MainScreen } from '../screens/MainScreen';
 import { SignUpProfileScreen } from '../screens/SignUpProfileScreen';
 import { TextInputModalScreen } from '../screens/TextInputModalScreen';
 import { SetUserLocationModalScreen } from '../screens/SetUserLocationModalScreen';
+import { AddNewPlaceScreen } from '../screens/AddNewPlaceScreen';
+import { THEME } from '../theme';
 // import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
 // import { NavigationButton } from '../components/NavigationButton';
@@ -133,6 +135,16 @@ export const AppNavigator: React.FC = () => {
   }
   return (
     <Stack.Navigator>
+      <Stack.Screen
+        name="AddNewPlaceScreen"
+        component={AddNewPlaceScreen}
+        options={{
+          title: 'Add New Place',
+          headerMode: 'screen',
+          headerTintColor: THEME.MAIN_COLOR,
+          headerTransparent: true,
+        }}
+      />
       <Stack.Screen
         name="MainScreen"
         component={MainScreen}

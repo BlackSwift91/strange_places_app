@@ -13,6 +13,7 @@ import {
 
 import { THEME } from '../theme';
 import { StartScreenProps } from '../interfaces/INavigation';
+import { useTranslation } from 'react-i18next';
 
 import { CustomButton } from '../components/CustomButton';
 import { ICustomButtonStyle } from '../interfaces/ICustomButtonStyle';
@@ -28,6 +29,8 @@ interface IProps {
 }
 
 export const StartScreen: React.FC<StartScreenProps> = ({ navigation }) => {
+  const { t } = useTranslation();
+
   const navToSignInScreen = () => {
     navigation.navigate('SignInScreen');
   };
@@ -55,16 +58,14 @@ export const StartScreen: React.FC<StartScreenProps> = ({ navigation }) => {
           <Image style={styles.logo} source={require('../images/logo_round.png')} />
         </View>
         <View style={styles.authentificationContainer}>
-          <Text style={styles.h1TextStyle}> Welcome to Strange Places</Text>
-          <Text style={styles.h2TextStyle}>
-            Travel, discover and share amazing places around you
-          </Text>
+          <Text style={styles.h1TextStyle}>{t('startScreen.appGreeting')}</Text>
+          <Text style={styles.h2TextStyle}>{t('startScreen.appDescription')}</Text>
 
           <View style={signInButtonStyle.buttonContainerStyle}>
             <CustomButton
               buttonStyle={signInButtonStyle.buttonStyle}
               buttonTextStyle={signInButtonStyle.buttonTextStyle}
-              buttonText={'Sign In'}
+              buttonText={t('startScreen.signInButton')}
               onPressHandler={navToSignInScreen}
             />
           </View>
@@ -73,7 +74,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({ navigation }) => {
             <CustomButton
               buttonStyle={signUpButtonStyle.buttonStyle}
               buttonTextStyle={signUpButtonStyle.buttonTextStyle}
-              buttonText={'Sign Up'}
+              buttonText={t('startScreen.signUpButton')}
               onPressHandler={navToSignUpScreen}
             />
           </View>
@@ -81,7 +82,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({ navigation }) => {
             <CustomButton
               buttonStyle={restorePasswordContainer.buttonStyle}
               buttonTextStyle={restorePasswordContainer.buttonTextStyle}
-              buttonText={'Restore password'}
+              buttonText={t('startScreen.restorePasswordButton')}
               onPressHandler={restorePassword}
             />
           </View>
@@ -97,10 +98,10 @@ const signUpButtonStyle = StyleSheet.create<ICustomButtonStyle>({
     marginTop: 10,
   },
   buttonStyle: {
-    backgroundColor: THEME.whiteColor,
+    backgroundColor: THEME.WHITE_COLOR,
   },
   buttonTextStyle: {
-    color: THEME.mainColor,
+    color: THEME.MAIN_COLOR,
   },
 });
 
@@ -110,10 +111,10 @@ const signInButtonStyle = StyleSheet.create<ICustomButtonStyle>({
     marginTop: 30,
   },
   buttonStyle: {
-    backgroundColor: THEME.mainColor,
+    backgroundColor: THEME.MAIN_COLOR,
   },
   buttonTextStyle: {
-    color: THEME.whiteColor,
+    color: THEME.WHITE_COLOR,
   },
 });
 
@@ -124,8 +125,8 @@ const restorePasswordContainer = StyleSheet.create<ICustomButtonStyle>({
   },
   buttonStyle: {
     textAlign: 'center',
-    backgroundColor: THEME.whiteColor,
-    borderColor: 'white',
+    backgroundColor: THEME.WHITE_COLOR,
+    borderColor: THEME.WHITE_COLOR,
     elevation: 0,
     paddingHorizontal: 0,
     paddingVertical: 0,
@@ -133,7 +134,7 @@ const restorePasswordContainer = StyleSheet.create<ICustomButtonStyle>({
     borderWidth: 0,
   },
   buttonTextStyle: {
-    color: THEME.mainColor,
+    color: THEME.MAIN_COLOR,
     fontSize: 15,
     lineHeight: 24,
     fontWeight: 'normal',
@@ -148,7 +149,7 @@ const styles = StyleSheet.create<IProps>({
     marginTop: 120,
     width: 140,
     height: 140,
-    backgroundColor: THEME.whiteColor,
+    backgroundColor: THEME.WHITE_COLOR,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 35,
@@ -159,7 +160,7 @@ const styles = StyleSheet.create<IProps>({
     paddingHorizontal: 20,
     paddingVertical: 30,
     borderRadius: 30,
-    backgroundColor: THEME.whiteColor,
+    backgroundColor: THEME.WHITE_COLOR,
     alignItems: 'center',
   },
   logo: {
@@ -172,12 +173,12 @@ const styles = StyleSheet.create<IProps>({
     justifyContent: 'space-between',
   },
   h1TextStyle: {
-    color: 'black',
+    color: THEME.BLACK_COLOR,
     fontSize: 20,
     fontWeight: 'bold',
   },
   h2TextStyle: {
-    color: 'black',
+    color: THEME.BLACK_COLOR,
     fontSize: 18,
     lineHeight: 24,
     paddingTop: 10,

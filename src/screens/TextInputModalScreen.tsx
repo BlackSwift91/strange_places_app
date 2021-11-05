@@ -38,7 +38,7 @@ export const TextInputModalScreen: React.FC<ITextInputModalScreen> = ({ navigati
   React.useLayoutEffect(() => {
     navigation.setOptions({
       title: route.params.textLabel,
-      headerTintColor: THEME.mainColor,
+      headerTintColor: THEME.MAIN_COLOR,
       headerRight: () => (
         <HeaderButtons HeaderButtonComponent={NavigationButton}>
           <Item
@@ -64,6 +64,7 @@ export const TextInputModalScreen: React.FC<ITextInputModalScreen> = ({ navigati
         <TextInput
           ref={userNameInputRef}
           placeholder={route.params.placeholder}
+          placeholderTextColor={THEME.DARK_GRAY_COLOR}
           style={styles.textInput}
           onChangeText={value => setText(value)}
           value={text}
@@ -80,7 +81,7 @@ const styles = StyleSheet.create({
   center: {
     flex: 1,
     alignItems: 'center',
-    backgroundColor: THEME.whiteColor,
+    backgroundColor: THEME.WHITE_COLOR,
     paddingTop: Number(StatusBar.currentHeight) + 80,
     paddingHorizontal: 20,
   },
@@ -89,7 +90,7 @@ const styles = StyleSheet.create({
   },
   wrapper: {
     borderRadius: 0,
-    borderColor: THEME.darkGray,
+    borderColor: THEME.DARK_GRAY_COLOR,
     borderBottomWidth: 1,
     backgroundColor: 'transparent',
     alignItems: 'center',
@@ -99,6 +100,7 @@ const styles = StyleSheet.create({
   },
   label: {
     alignSelf: 'flex-start',
+    color: THEME.BLACK_COLOR,
   },
   textInput: {
     width: windowWidth - 40,

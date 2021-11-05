@@ -24,6 +24,7 @@ export const ProfileTextInput: React.FC<IProfileTextInputProps> = props => {
       <Text style={styles.label}>{props.textLabel}</Text>
       <TextInput
         placeholder={props.placeholder}
+        placeholderTextColor={THEME.DARK_GRAY_COLOR}
         style={styles.textInput}
         onChangeText={value => props.onChangeTextHandler(value)}
         value={props.value}
@@ -35,7 +36,7 @@ export const ProfileTextInput: React.FC<IProfileTextInputProps> = props => {
 const styles = StyleSheet.create<IProfileTextInputStyle>({
   wrapper: {
     borderRadius: 0,
-    borderColor: THEME.darkGray,
+    borderColor: THEME.DARK_GRAY_COLOR,
     borderBottomWidth: 1,
     backgroundColor: 'transparent',
     alignItems: 'center',
@@ -46,6 +47,7 @@ const styles = StyleSheet.create<IProfileTextInputStyle>({
   label: {
     alignSelf: 'flex-start',
     paddingLeft: 0,
+    color: '#232323',
   },
   textInput: {
     width: '100%',
@@ -53,6 +55,7 @@ const styles = StyleSheet.create<IProfileTextInputStyle>({
     flexGrow: 1,
     flexShrink: 1,
     fontSize: 16,
+    color: THEME.DARK_GRAY_COLOR,
   },
   alertStyle: {
     backgroundColor: 'rgba(255, 0, 0, 0.1)',

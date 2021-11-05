@@ -36,8 +36,8 @@ const styles = StyleSheet.create<IStyle>({
     paddingHorizontal: 32,
     borderRadius: 10,
     elevation: 3,
-    backgroundColor: THEME.mainColor,
-    borderColor: THEME.mainColor,
+    backgroundColor: THEME.MAIN_COLOR,
+    borderColor: THEME.MAIN_COLOR,
     borderWidth: 3,
   },
   buttonTextStyle: {
@@ -45,7 +45,7 @@ const styles = StyleSheet.create<IStyle>({
     lineHeight: 21,
     fontWeight: 'bold',
     letterSpacing: 0.25,
-    color: THEME.whiteColor,
+    color: THEME.WHITE_COLOR,
   },
   disabledStyle: {
     backgroundColor: '#9e9e9e',

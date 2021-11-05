@@ -1,6 +1,9 @@
 export const THEME = {
-  whiteColor: '#ffffff',
-  mainColor: '#0071bc',
-  darkGray: '#8e8d8d',
-  lightGray: '#eeeeee',
+  WHITE_COLOR: '#FFFFFF',
+  MAIN_COLOR: '#0071BC',
+  DARK_GRAY_COLOR: '#8E8D8D',
+  LIGHT_GRAY_COLOR: '#EEEEEE',
+  BLACK_COLOR: '#000000',
+  RED_COLOR: '#FF0000',
+  TRANSPARENT: 'transparent',
 };

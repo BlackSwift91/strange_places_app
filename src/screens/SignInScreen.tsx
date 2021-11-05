@@ -10,17 +10,20 @@ import {
   TextInput,
   ViewStyle,
   ImageStyle,
-  TextStyle,
 } from 'react-native';
+
+import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { setAllUserData, setIsNewUser } from '../store/actions/actions';
-import auth from '@react-native-firebase/auth';
 import { useDispatch } from 'react-redux';
 import { useIsFocused } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 
 import { THEME } from '../theme';
 import { CustomButton } from '../components/CustomButton';
+import { ICustomButtonStyle } from '../interfaces/ICustomButtonStyle';
+import { ItextInputStyle } from '../interfaces/ItextInputStyle';
+import { setAllUserData, setIsNewUser } from '../store/actions/actions';
 import { AlertText } from '../components/AlertText';
 import { ISignInScreenProps } from '../interfaces/INavigation';
 
@@ -30,19 +33,6 @@ interface IProps {
   authentificationContainer: ImageStyle;
   userLoginTextInputContainer: ViewStyle;
   userPasswordTextInputContainer: ViewStyle;
-}
-
-interface ICustomButtonStyle {
-  buttonContainerStyle: ViewStyle;
-  buttonStyle: ViewStyle;
-  buttonTextStyle: TextStyle;
-}
-
-interface ItextInputStyle {
-  insideWrapper: ViewStyle;
-  imageContainer: ViewStyle;
-  textInput: ViewStyle;
-  alertStyle?: ViewStyle;
 }
 
 export interface IUser {
@@ -60,7 +50,6 @@ export interface IUser {
 }
 
 export const SignInScreen: React.FC<ISignInScreenProps> = ({ navigation }) => {
-  const dispatch = useDispatch();
   const userNameInputRef = useRef<TextInput>(null);
   const userPasswordInputRef = useRef<TextInput>(null);
   const [userLogin, setUserLogin] = useState<string>('');
@@ -70,6 +59,9 @@ export const SignInScreen: React.FC<ISignInScreenProps> = ({ navigation }) => {
   const [errorDescription, setErrorDescription] = useState<string>('');
   const [loginError, setLoginError] = useState<Boolean>(false);
   const [passwordError, setPasswordError] = useState<Boolean>(false);
+
+  const dispatch = useDispatch();
+  const { t } = useTranslation();
   const isFocused = useIsFocused();
 
   useEffect(() => {
@@ -78,7 +70,7 @@ export const SignInScreen: React.FC<ISignInScreenProps> = ({ navigation }) => {
     }
   }, [dispatch, isFocused]);
 
-  const test = () => {
+  const userSignIn = () => {
     if (userPassword === '') {
       formValidation();
       return;
@@ -88,8 +80,6 @@ export const SignInScreen: React.FC<ISignInScreenProps> = ({ navigation }) => {
     auth()
       .signInWithEmailAndPassword(userLogin, userPassword)
       .then(result => {
-        console.log('User account created & signed in!');
-        console.log(result.user.uid);
         setPasswordError(false);
         setLoginError(false);
         changeErrorDescription('');
@@ -98,7 +88,6 @@ export const SignInScreen: React.FC<ISignInScreenProps> = ({ navigation }) => {
           .collection('users')
           .where('user_id', '==', `${result.user.uid}`)
           .get()
-
           .then(response => {
             console.log(response);
             response.forEach((doc: any) => {
@@ -123,18 +112,22 @@ export const SignInScreen: React.FC<ISignInScreenProps> = ({ navigation }) => {
           });
       })
       .catch(error => {
-        if (error.code === 'auth/user-not-found') {
-          console.log('That email address is invalid!');
-          changeErrorDescription('This email address is invalid!');
-
+        if (error.code === 'auth/invalid-email') {
+          changeErrorDescription(t('signInScreen.alertInvalidEmail'));
+          setLoginError(true);
+        } else if (error.code === 'auth/user-not-found') {
+          changeErrorDescription(t('signInScreen.alertUserNotFound'));
           setLoginError(true);
         } else if (error.code === 'auth/wrong-password') {
           setLoginError(false);
           setPasswordError(true);
-          changeErrorDescription('Wrong password!');
-          // navigation.navigate('SignUpProfileScreen');
+          changeErrorDescription(t('signInScreen.alertWrongPassword'));
         }
       });
+  };
+
+  const restorePassword = () => {
+    console.log('restore password');
   };
 
   const navToSignUpScreen = async () => {
@@ -149,7 +142,7 @@ export const SignInScreen: React.FC<ISignInScreenProps> = ({ navigation }) => {
   const formValidation = () => {
     if (userLogin === '') {
       setLoginError(true);
-      changeErrorDescription('Please input youl email');
+      changeErrorDescription(t('signInScreen.alertInputEmail'));
       return;
     } else if (userLogin !== '') {
       setLoginError(false);
@@ -157,7 +150,7 @@ export const SignInScreen: React.FC<ISignInScreenProps> = ({ navigation }) => {
     }
     if (userPassword.length < 6) {
       setPasswordError(true);
-      changeErrorDescription('The password must be at least six symbols');
+      changeErrorDescription(t('signInScreen.alertPasswordLength'));
     } else {
       setPasswordError(false);
       changeErrorDescription('');
@@ -167,7 +160,7 @@ export const SignInScreen: React.FC<ISignInScreenProps> = ({ navigation }) => {
   return (
     <View style={styles.screenContainer}>
       <ImageBackground
-        source={require('../images/StartScreenImg2.jpg')}
+        source={require('../images/sign_in_screen.jpg')}
         resizeMode="cover"
         style={styles.backgroundImage}>
         <StatusBar
@@ -188,15 +181,15 @@ export const SignInScreen: React.FC<ISignInScreenProps> = ({ navigation }) => {
                   : textInputStyle.insideWrapper
               }>
               <View style={textInputStyle.imageContainer}>
-                <MaterialCommunityIcons name="account" color={THEME.darkGray} size={24} />
+                <MaterialCommunityIcons name="account" color={THEME.DARK_GRAY_COLOR} size={24} />
               </View>
-
               <TextInput
                 ref={userNameInputRef}
                 returnKeyType="next"
                 maxLength={30}
                 autoCapitalize="none"
-                placeholder="User Name"
+                placeholder={t('signInScreen.textInputUserEmail')}
+                placeholderTextColor={THEME.DARK_GRAY_COLOR}
                 style={textInputStyle.textInput}
                 onChangeText={val => setUserLogin(val)}
                 value={userLogin}
@@ -219,12 +212,13 @@ export const SignInScreen: React.FC<ISignInScreenProps> = ({ navigation }) => {
                   : textInputStyle.insideWrapper
               }>
               <View style={textInputStyle.imageContainer}>
-                <MaterialCommunityIcons name="lock" color={THEME.darkGray} size={24} />
+                <MaterialCommunityIcons name="lock" color={THEME.DARK_GRAY_COLOR} size={24} />
               </View>
               <TextInput
                 autoCapitalize="none"
                 secureTextEntry={passwordVisible}
-                placeholder="Password"
+                placeholder={t('signInScreen.textInputPassword')}
+                placeholderTextColor={THEME.DARK_GRAY_COLOR}
                 style={textInputStyle.textInput}
                 onChangeText={val => setUserPassword(val)}
                 value={userPassword}
@@ -234,7 +228,7 @@ export const SignInScreen: React.FC<ISignInScreenProps> = ({ navigation }) => {
               <TouchableOpacity
                 style={textInputStyle.imageContainer}
                 onPress={() => setPasswordVisible(prev => !prev)}>
-                <MaterialCommunityIcons name="eye" color={THEME.darkGray} size={24} />
+                <MaterialCommunityIcons name="eye" color={THEME.DARK_GRAY_COLOR} size={24} />
               </TouchableOpacity>
             </View>
           </View>
@@ -243,23 +237,23 @@ export const SignInScreen: React.FC<ISignInScreenProps> = ({ navigation }) => {
             <CustomButton
               buttonStyle={signInButtonStyle.buttonStyle}
               buttonTextStyle={signInButtonStyle.buttonTextStyle}
-              buttonText={'Sign In'}
-              onPressHandler={test}
+              buttonText={t('signInScreen.signIn')}
+              onPressHandler={userSignIn}
             />
           </View>
           <View style={restorePasswordButtonStyle.buttonContainerStyle}>
             <CustomButton
               buttonStyle={restorePasswordButtonStyle.buttonStyle}
               buttonTextStyle={restorePasswordButtonStyle.buttonTextStyle}
-              buttonText={'Restore password'}
-              onPressHandler={test}
+              buttonText={t('signInScreen.restorePassword')}
+              onPressHandler={restorePassword}
             />
           </View>
           <View style={signUpButtonStyle.buttonContainerStyle}>
             <CustomButton
               buttonStyle={signUpButtonStyle.buttonStyle}
               buttonTextStyle={signUpButtonStyle.buttonTextStyle}
-              buttonText={'Sign Up'}
+              buttonText={t('signInScreen.signUp')}
               onPressHandler={navToSignUpScreen}
             />
           </View>
@@ -280,17 +274,19 @@ const styles = StyleSheet.create<IProps>({
     position: 'absolute',
     width: '100%',
     height: Dimensions.get('window').height + Number(StatusBar.currentHeight),
+    top: 0,
     bottom: 0,
     left: 0,
     right: 0,
   },
   authentificationContainer: {
-    marginTop: 430,
     width: '85%',
+    position: 'absolute',
+    bottom: 110,
     paddingHorizontal: 20,
     paddingVertical: 30,
     borderRadius: 30,
-    backgroundColor: '#ffffff',
+    backgroundColor: THEME.WHITE_COLOR,
     alignItems: 'center',
   },
   userLoginTextInputContainer: {
@@ -308,9 +304,9 @@ const styles = StyleSheet.create<IProps>({
 const textInputStyle = StyleSheet.create<ItextInputStyle>({
   insideWrapper: {
     borderRadius: 10,
-    borderColor: THEME.lightGray,
+    borderColor: THEME.LIGHT_GRAY_COLOR,
     borderWidth: 1,
-    backgroundColor: THEME.lightGray,
+    backgroundColor: THEME.LIGHT_GRAY_COLOR,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -323,6 +319,7 @@ const textInputStyle = StyleSheet.create<ItextInputStyle>({
     alignSelf: 'flex-start',
     flexGrow: 1,
     flexShrink: 1,
+    color: THEME.DARK_GRAY_COLOR,
   },
   alertStyle: {
     backgroundColor: 'rgba(255, 0, 0, 0.1)',
@@ -337,10 +334,10 @@ const signInButtonStyle = StyleSheet.create<ICustomButtonStyle>({
     marginTop: 20,
   },
   buttonStyle: {
-    backgroundColor: THEME.mainColor,
+    backgroundColor: THEME.MAIN_COLOR,
   },
   buttonTextStyle: {
-    color: THEME.whiteColor,
+    color: THEME.WHITE_COLOR,
   },
 });
 
@@ -351,8 +348,8 @@ const signUpButtonStyle = StyleSheet.create<ICustomButtonStyle>({
   },
   buttonStyle: {
     textAlign: 'center',
-    backgroundColor: THEME.whiteColor,
-    borderColor: 'white',
+    backgroundColor: THEME.WHITE_COLOR,
+    borderColor: THEME.WHITE_COLOR,
     elevation: 0,
     paddingHorizontal: 0,
     paddingVertical: 0,
@@ -360,7 +357,7 @@ const signUpButtonStyle = StyleSheet.create<ICustomButtonStyle>({
     borderWidth: 0,
   },
   buttonTextStyle: {
-    color: THEME.mainColor,
+    color: THEME.MAIN_COLOR,
     fontSize: 15,
     lineHeight: 24,
     fontWeight: 'normal',
@@ -374,8 +371,8 @@ const restorePasswordButtonStyle = StyleSheet.create<ICustomButtonStyle>({
   },
   buttonStyle: {
     textAlign: 'center',
-    backgroundColor: THEME.whiteColor,
-    borderColor: 'white',
+    backgroundColor: THEME.WHITE_COLOR,
+    borderColor: THEME.WHITE_COLOR,
     elevation: 0,
     paddingHorizontal: 0,
     paddingVertical: 0,
@@ -383,7 +380,7 @@ const restorePasswordButtonStyle = StyleSheet.create<ICustomButtonStyle>({
     borderWidth: 0,
   },
   buttonTextStyle: {
-    color: THEME.mainColor,
+    color: THEME.MAIN_COLOR,
     fontSize: 15,
     lineHeight: 24,
     fontWeight: 'normal',

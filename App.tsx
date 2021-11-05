@@ -7,16 +7,14 @@
 import React from 'react';
 
 import 'react-native-gesture-handler';
-import {
-  NavigationContainer,
-  DefaultTheme as NavigationTheme,
-} from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme as NavigationTheme } from '@react-navigation/native';
 import { OverflowMenuProvider } from 'react-navigation-header-buttons';
 import { Provider as StoreProvider } from 'react-redux';
 
 import { store } from './src/store';
 import { AppNavigator } from './src/navigation/AppNavigation';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
+import './src/localization/i18n';
 
 const MyTheme = {
   ...NavigationTheme,

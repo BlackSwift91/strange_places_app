@@ -9,18 +9,21 @@ import {
   ImageStyle,
   BackHandler,
   Text,
-  PermissionsAndroid,
   Image,
+  Modal,
+  Pressable,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
+
 import { useDispatch } from 'react-redux';
-import ImagePicker from 'react-native-image-crop-picker';
 
 import { THEME } from '../theme';
 import { UserIcon } from '../images/UserIcon';
 import { ISignUpProfileScreen } from '../interfaces/INavigation';
 import { ICustomButtonStyle } from '../interfaces/ICustomButtonStyle';
 import { setAllUserData, setIsNewUser } from '../store/actions/actions';
+import { requestCameraPermission } from '../AndroidPermissions';
+import { pickSingleFromGallery, pickSingleWithCamera } from '../ImagePicker';
 
 import { CustomButton } from '../components/CustomButton';
 import { ProfileTextInput } from './../components/ProfileTextInput';
@@ -41,28 +44,8 @@ export interface IUser {
   [key: string]: string;
 }
 
-const requestCameraPermission = async () => {
-  try {
-    const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA, {
-      title: 'App Camera Permission',
-      message: 'App needs access to your camera ',
-      buttonNeutral: 'Ask Me Later',
-      buttonNegative: 'Cancel',
-      buttonPositive: 'OK',
-    });
-    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-      console.log('Camera permission given');
-    } else {
-      console.log('Camera permission denied');
-    }
-  } catch (err) {
-    console.warn(err);
-  }
-};
-
 export const SignUpProfileScreen: React.FC<ISignUpProfileScreen> = ({ navigation, route }) => {
   BackHandler.addEventListener('hardwareBackPress', () => true);
-  const dispatch = useDispatch();
 
   const [userLogin, setUserLogin] = useState<string>('');
   const [userId, setUserId] = useState<string>('');
@@ -72,34 +55,30 @@ export const SignUpProfileScreen: React.FC<ISignUpProfileScreen> = ({ navigation
   const [userCity, setUserCity] = useState<string>('');
   const [userCountry, setUserCountry] = useState<string>('');
   const [image, setImage] = useState({ uri: UserIcon, width: 140, height: 140 });
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
 
-  console.log('log', userLogin);
-  console.log('id', userId);
+  const dispatch = useDispatch();
 
-  function pickSingleBase64(cropit: boolean) {
-    ImagePicker.openPicker({
-      width: 140,
-      height: 140,
-      cropping: cropit,
-      includeBase64: true,
-      includeExif: true,
-      cropperCircleOverlay: true,
-      mediaType: 'photo',
-    })
-      .then(img => {
-        console.log('received base64 image');
-        setImage({
-          uri: `data:${img.mime};base64,` + img.data,
-          width: img.width,
-          height: img.height,
-        });
-      })
-      .catch(e => console.log(e));
-  }
-  const onButtonPress = React.useCallback(() => {
-    requestCameraPermission();
-    pickSingleBase64(true);
-  }, []);
+  const selectPhotoFromLibrary = async () => {
+    await setModalVisible(!modalVisible);
+    const img = await pickSingleFromGallery();
+    if (img) {
+      setImage(img);
+    }
+  };
+
+  const makeNewPhoto = async () => {
+    await setModalVisible(!modalVisible);
+    const img = await pickSingleWithCamera();
+    if (img) {
+      setImage(img);
+    }
+  };
+
+  const onButtonPress = async () => {
+    await requestCameraPermission();
+    await setModalVisible(!modalVisible);
+  };
 
   function setTextInputUserLocationValue() {
     if (!userCountry) {
@@ -213,9 +192,7 @@ export const SignUpProfileScreen: React.FC<ISignUpProfileScreen> = ({ navigation
     setAboutUserText(text);
   };
 
-  const changeUserLocationText = () => {
-    console.log(2);
-  };
+  const changeUserLocationText = () => {};
 
   const userInfoModalScreen = () => {
     navigation.navigate('TextInputModalScreen', {
@@ -245,18 +222,18 @@ export const SignUpProfileScreen: React.FC<ISignUpProfileScreen> = ({ navigation
           backgroundColor="transparent"
           translucent={true}
           hidden={false}
+          barStyle="dark-content"
         />
         <View style={styles.authentificationContainer}>
           <View style={styles.userImageContainer}>
             <Image
               source={{
-                width: image.width,
-                height: image.height,
+                width: 140,
+                height: 140,
                 uri: image.uri,
               }}
             />
           </View>
-
           <View style={changeAvatarButtonStyle.buttonContainerStyle}>
             <CustomButton
               buttonStyle={changeAvatarButtonStyle.buttonStyle}
@@ -265,8 +242,40 @@ export const SignUpProfileScreen: React.FC<ISignUpProfileScreen> = ({ navigation
               onPressHandler={onButtonPress}
             />
           </View>
+
+          <View style={styles.centeredView}>
+            <Modal
+              animationType="fade"
+              transparent={true}
+              visible={modalVisible}
+              onRequestClose={() => {
+                setModalVisible(!modalVisible);
+              }}>
+              <View style={styles.centeredView}>
+                <View style={styles.modalView}>
+                  <Pressable
+                    style={[styles.button, styles.buttonClose]}
+                    onPress={() => {
+                      setModalVisible(!modalVisible);
+                      makeNewPhoto();
+                    }}>
+                    <Text style={styles.textStyle}>Make a new photo</Text>
+                  </Pressable>
+                  <Pressable
+                    style={[styles.button, styles.buttonClose]}
+                    onPress={() => {
+                      setModalVisible(!modalVisible);
+                      selectPhotoFromLibrary();
+                    }}>
+                    <Text style={styles.textStyle}>Select from library</Text>
+                  </Pressable>
+                </View>
+              </View>
+            </Modal>
+          </View>
+
           <View style={styles.userNameStyle}>
-            <Text>{userLogin}</Text>
+            <Text style={styles.userLogin}>{userLogin}</Text>
           </View>
           <View style={styles.textInputWrapper}>
             <ProfileTextInput
@@ -282,6 +291,7 @@ export const SignUpProfileScreen: React.FC<ISignUpProfileScreen> = ({ navigation
               onChangeTextHandler={changeUserLastName}
             />
           </View>
+
           <View style={styles.textInputWrapper}>
             <ProfileModalTextInput
               textLabel={'About you'}
@@ -357,6 +367,53 @@ const styles = StyleSheet.create({
     borderRadius: 70,
     overflow: 'hidden',
   },
+  userLogin: {
+    fontSize: 18,
+    color: THEME.DARK_GRAY_COLOR,
+  },
+  centeredView: {
+    width: '100%',
+    top: 280,
+    position: 'absolute',
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  button: {
+    borderRadius: 15,
+    padding: 10,
+    width: '90%',
+    elevation: 2,
+    marginBottom: 15,
+  },
+  buttonOpen: {
+    backgroundColor: "#F194FF",
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+    paddingVertical: 5,
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center"
+  }
 });
 
 const confirmButtonStyle = StyleSheet.create<ICustomButtonStyle>({
@@ -365,10 +422,10 @@ const confirmButtonStyle = StyleSheet.create<ICustomButtonStyle>({
     marginTop: 40,
   },
   buttonStyle: {
-    backgroundColor: THEME.mainColor,
+    backgroundColor: THEME.MAIN_COLOR,
   },
   buttonTextStyle: {
-    color: THEME.whiteColor,
+    color: THEME.WHITE_COLOR,
   },
 });
 
@@ -388,7 +445,7 @@ const changeAvatarButtonStyle = StyleSheet.create<ICustomButtonStyle>({
     borderWidth: 0,
   },
   buttonTextStyle: {
-    color: THEME.mainColor,
+    color: THEME.MAIN_COLOR,
     fontSize: 18,
     lineHeight: 24,
     fontWeight: 'normal',
