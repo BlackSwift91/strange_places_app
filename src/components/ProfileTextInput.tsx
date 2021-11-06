@@ -38,7 +38,7 @@ const styles = StyleSheet.create<IProfileTextInputStyle>({
     borderRadius: 0,
     borderColor: THEME.DARK_GRAY_COLOR,
     borderBottomWidth: 1,
-    backgroundColor: 'transparent',
+    backgroundColor: THEME.TRANSPARENT,
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
@@ -47,7 +47,7 @@ const styles = StyleSheet.create<IProfileTextInputStyle>({
   label: {
     alignSelf: 'flex-start',
     paddingLeft: 0,
-    color: '#232323',
+    color: THEME.DARK_GRAY_COLOR,
   },
   textInput: {
     width: '100%',

@@ -58,11 +58,6 @@ export const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
   }, [dispatch, isFocused]);
 
   const userSignUp = async () => {
-    navigation.navigate('SignUpProfileScreen', {
-      user_name: 'andrey9@gmail.com',
-      user_id: 'res.user.uid',
-    });
-
     if (userPassword === '') {
       formValidation();
       return;
@@ -73,7 +68,6 @@ export const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
       auth()
         .createUserWithEmailAndPassword(userLogin, userPassword)
         .then(res => {
-          console.log('User account created & signed in!');
           firestore()
             .collection('users')
             .add({

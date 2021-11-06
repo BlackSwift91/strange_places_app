@@ -42,7 +42,7 @@ const styles = StyleSheet.create<IProfileTextInputStyle>({
     borderRadius: 0,
     borderColor: THEME.DARK_GRAY_COLOR,
     borderBottomWidth: 1,
-    backgroundColor: 'transparent',
+    backgroundColor: THEME.TRANSPARENT,
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
@@ -62,7 +62,7 @@ const styles = StyleSheet.create<IProfileTextInputStyle>({
   },
   alertStyle: {
     backgroundColor: 'rgba(255, 0, 0, 0.1)',
-    borderColor: 'red',
+    borderColor: THEME.RED_COLOR,
     borderWidth: 1,
   },
 });

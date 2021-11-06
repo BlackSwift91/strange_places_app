@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   text: {
-    color: 'black',
+    color: THEME.BLACK_COLOR,
   },
   wrapper: {
     borderRadius: 0,

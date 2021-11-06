@@ -105,7 +105,7 @@ export const AppNavigator: React.FC = () => {
           component={SignUpProfileScreen}
           options={{
             title: 'Edit your profile',
-            headerTintColor: 'white',
+            headerTintColor: THEME.MAIN_COLOR,
             headerTransparent: true,
             headerLeft: () => null,
           }}

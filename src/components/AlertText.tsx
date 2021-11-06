@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { THEME } from '../theme';
 
 interface IText {
   text: string;
@@ -19,6 +20,6 @@ const styles = StyleSheet.create({
     width: '90%',
   },
   text: {
-    color: 'red',
+    color: THEME.RED_COLOR,
   },
 });

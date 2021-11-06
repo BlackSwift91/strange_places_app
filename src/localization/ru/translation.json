@@ -1,8 +1,8 @@
 {
   "_comment": "src/localization/en/translation.json",
   "startScreen": {
-    "appGreeting": "Welcome to Strange Places",
-    "appDescription": "Travel, discover and share amazing places around you",
+    "appGreeting": "Добро пожаловать в Strange Places",
+    "appDescription": "Путешествуй, открывай и делись невероятными местами вокруг тебя!",
     "signInButton": "Sign In",
     "signUpButton": "Sign Up",
     "restorePasswordButton": "Restore password"

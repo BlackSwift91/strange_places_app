@@ -2,16 +2,13 @@ import React, { useEffect, useState } from 'react';
 import {
   View,
   StyleSheet,
-  ImageBackground,
   StatusBar,
-  Dimensions,
   ViewStyle,
   ImageStyle,
   BackHandler,
   Text,
   Image,
-  Modal,
-  Pressable,
+  TextStyle,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 
@@ -24,23 +21,24 @@ import { ICustomButtonStyle } from '../interfaces/ICustomButtonStyle';
 import { setAllUserData, setIsNewUser } from '../store/actions/actions';
 import { requestCameraPermission } from '../AndroidPermissions';
 import { pickSingleFromGallery, pickSingleWithCamera } from '../ImagePicker';
+import { useTranslation } from 'react-i18next';
 
 import { CustomButton } from '../components/CustomButton';
 import { ProfileTextInput } from './../components/ProfileTextInput';
 import { ProfileModalTextInput } from './../components/ProfileModalTextInput';
+import { ImageSourceModal } from '../components/ImageSourceModal';
 
-interface IProps {
+interface IStyle {
   screenContainer: ViewStyle;
-  backgroundImage: ImageStyle;
   authentificationContainer: ImageStyle;
   loginTextInputWrapper: ViewStyle;
-  passwordTextInputWrapper: ViewStyle;
   userImageContainer: ViewStyle;
   textInputWrapper: ViewStyle;
   userNameStyle: ViewStyle;
+  userLogin: TextStyle;
 }
 
-export interface IUser {
+interface IUser {
   [key: string]: string;
 }
 
@@ -58,37 +56,8 @@ export const SignUpProfileScreen: React.FC<ISignUpProfileScreen> = ({ navigation
   const [modalVisible, setModalVisible] = useState<boolean>(false);
 
   const dispatch = useDispatch();
-
-  const selectPhotoFromLibrary = async () => {
-    await setModalVisible(!modalVisible);
-    const img = await pickSingleFromGallery();
-    if (img) {
-      setImage(img);
-    }
-  };
-
-  const makeNewPhoto = async () => {
-    await setModalVisible(!modalVisible);
-    const img = await pickSingleWithCamera();
-    if (img) {
-      setImage(img);
-    }
-  };
-
-  const onButtonPress = async () => {
-    await requestCameraPermission();
-    await setModalVisible(!modalVisible);
-  };
-
-  function setTextInputUserLocationValue() {
-    if (!userCountry) {
-      return userCity;
-    } else if (!userCity) {
-      return userCountry;
-    } else {
-      return `${userCountry}, ${userCity}`;
-    }
-  }
+  const userLocationTextValue = setTextInputUserLocationValue();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (route.params?.city) {
@@ -180,6 +149,31 @@ export const SignUpProfileScreen: React.FC<ISignUpProfileScreen> = ({ navigation
       });
   };
 
+  const selectPhotoFromLibrary = async () => {
+    await setModalVisible(!modalVisible);
+    const resImagee = await pickSingleFromGallery();
+    if (resImagee) {
+      setImage(resImagee);
+    }
+  };
+
+  const makeNewPhoto = async () => {
+    await setModalVisible(false);
+    const resImagee = await pickSingleWithCamera();
+    if (resImagee) {
+      setImage(resImagee);
+    }
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+  };
+
+  const onButtonPress = async () => {
+    await requestCameraPermission();
+    await setModalVisible(!modalVisible);
+  };
+
   const changeUserFirstName = (text: string) => {
     setUserFirstName(text);
   };
@@ -197,8 +191,8 @@ export const SignUpProfileScreen: React.FC<ISignUpProfileScreen> = ({ navigation
   const userInfoModalScreen = () => {
     navigation.navigate('TextInputModalScreen', {
       textValue: aboutUserText,
-      textLabel: 'About you',
-      placeholder: 'About you',
+      textLabel: t('signUpProfileScreen.userAboutInfo'),
+      placeholder: t('signUpProfileScreen.userAboutInfo'),
     });
   };
 
@@ -209,144 +203,109 @@ export const SignUpProfileScreen: React.FC<ISignUpProfileScreen> = ({ navigation
     });
   };
 
-  const userLocationTextValue = setTextInputUserLocationValue();
+  function setTextInputUserLocationValue() {
+    if (!userCountry) {
+      return userCity;
+    } else if (!userCity) {
+      return userCountry;
+    } else {
+      return `${userCountry}, ${userCity}`;
+    }
+  }
 
   return (
     <View style={styles.screenContainer}>
-      <ImageBackground
-        source={require('../images/StartScreenImg2.jpg')}
-        resizeMode="cover"
-        style={styles.backgroundImage}>
-        <StatusBar
-          animated={true}
-          backgroundColor="transparent"
-          translucent={true}
-          hidden={false}
-          barStyle="dark-content"
-        />
-        <View style={styles.authentificationContainer}>
-          <View style={styles.userImageContainer}>
-            <Image
-              source={{
-                width: 140,
-                height: 140,
-                uri: image.uri,
-              }}
-            />
-          </View>
-          <View style={changeAvatarButtonStyle.buttonContainerStyle}>
-            <CustomButton
-              buttonStyle={changeAvatarButtonStyle.buttonStyle}
-              buttonTextStyle={changeAvatarButtonStyle.buttonTextStyle}
-              buttonText={'Change your avatar'}
-              onPressHandler={onButtonPress}
-            />
-          </View>
-
-          <View style={styles.centeredView}>
-            <Modal
-              animationType="fade"
-              transparent={true}
-              visible={modalVisible}
-              onRequestClose={() => {
-                setModalVisible(!modalVisible);
-              }}>
-              <View style={styles.centeredView}>
-                <View style={styles.modalView}>
-                  <Pressable
-                    style={[styles.button, styles.buttonClose]}
-                    onPress={() => {
-                      setModalVisible(!modalVisible);
-                      makeNewPhoto();
-                    }}>
-                    <Text style={styles.textStyle}>Make a new photo</Text>
-                  </Pressable>
-                  <Pressable
-                    style={[styles.button, styles.buttonClose]}
-                    onPress={() => {
-                      setModalVisible(!modalVisible);
-                      selectPhotoFromLibrary();
-                    }}>
-                    <Text style={styles.textStyle}>Select from library</Text>
-                  </Pressable>
-                </View>
-              </View>
-            </Modal>
-          </View>
-
-          <View style={styles.userNameStyle}>
-            <Text style={styles.userLogin}>{userLogin}</Text>
-          </View>
-          <View style={styles.textInputWrapper}>
-            <ProfileTextInput
-              textLabel={'Name'}
-              placeholder={'Name'}
-              onChangeTextHandler={changeUserFirstName}
-            />
-          </View>
-          <View style={styles.textInputWrapper}>
-            <ProfileTextInput
-              textLabel={'Surname'}
-              placeholder={'Surname'}
-              onChangeTextHandler={changeUserLastName}
-            />
-          </View>
-
-          <View style={styles.textInputWrapper}>
-            <ProfileModalTextInput
-              textLabel={'About you'}
-              placeholder={'About you'}
-              onChangeTextHandler={changeAboutUserTextInfo}
-              onFocusHandler={userInfoModalScreen}
-              value={aboutUserText}
-            />
-          </View>
-          <View style={styles.textInputWrapper}>
-            <ProfileModalTextInput
-              textLabel={'Your location'}
-              placeholder={'Your location'}
-              onChangeTextHandler={changeUserLocationText}
-              onFocusHandler={locationInputModalNavigation}
-              value={userLocationTextValue}
-            />
-          </View>
-          <View style={confirmButtonStyle.buttonContainerStyle}>
-            <CustomButton
-              buttonStyle={confirmButtonStyle.buttonStyle}
-              buttonTextStyle={confirmButtonStyle.buttonTextStyle}
-              buttonText={'Confirm'}
-              onPressHandler={submitUserInformation}
-            />
-          </View>
+      <StatusBar
+        animated={true}
+        backgroundColor="transparent"
+        translucent={true}
+        hidden={false}
+        barStyle="dark-content"
+      />
+      <View style={styles.authentificationContainer}>
+        <View style={styles.userImageContainer}>
+          <Image
+            source={{
+              width: 140,
+              height: 140,
+              uri: image.uri,
+            }}
+          />
         </View>
-      </ImageBackground>
+        <View style={changeAvatarButtonStyle.buttonContainerStyle}>
+          <CustomButton
+            buttonStyle={changeAvatarButtonStyle.buttonStyle}
+            buttonTextStyle={changeAvatarButtonStyle.buttonTextStyle}
+            buttonText={t('signUpProfileScreen.changeAvatar')}
+            onPressHandler={onButtonPress}
+          />
+        </View>
+        <ImageSourceModal
+          visibility={modalVisible}
+          closeModal={closeModal}
+          makePhoto={makeNewPhoto}
+          selectFromLibrary={selectPhotoFromLibrary}
+        />
+        <View style={styles.userNameStyle}>
+          <Text style={styles.userLogin}>{userLogin}</Text>
+        </View>
+        <View style={styles.textInputWrapper}>
+          <ProfileTextInput
+            textLabel={t('signUpProfileScreen.userFirstName')}
+            placeholder={t('signUpProfileScreen.userFirstName')}
+            onChangeTextHandler={changeUserFirstName}
+          />
+        </View>
+        <View style={styles.textInputWrapper}>
+          <ProfileTextInput
+            textLabel={t('signUpProfileScreen.userLastName')}
+            placeholder={t('signUpProfileScreen.userLastName')}
+            onChangeTextHandler={changeUserLastName}
+          />
+        </View>
+
+        <View style={styles.textInputWrapper}>
+          <ProfileModalTextInput
+            textLabel={t('signUpProfileScreen.userAboutInfo')}
+            placeholder={t('signUpProfileScreen.userAboutInfo')}
+            onChangeTextHandler={changeAboutUserTextInfo}
+            onFocusHandler={userInfoModalScreen}
+            value={aboutUserText}
+          />
+        </View>
+        <View style={styles.textInputWrapper}>
+          <ProfileModalTextInput
+            textLabel={t('signUpProfileScreen.userLocation')}
+            placeholder={t('signUpProfileScreen.userLocation')}
+            onChangeTextHandler={changeUserLocationText}
+            onFocusHandler={locationInputModalNavigation}
+            value={userLocationTextValue}
+          />
+        </View>
+        <View style={confirmButtonStyle.buttonContainerStyle}>
+          <CustomButton
+            buttonStyle={confirmButtonStyle.buttonStyle}
+            buttonTextStyle={confirmButtonStyle.buttonTextStyle}
+            buttonText={t('signUpProfileScreen.confirmButton')}
+            onPressHandler={submitUserInformation}
+          />
+        </View>
+      </View>
     </View>
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create<IStyle>({
   screenContainer: {
     flex: 1,
-  },
-  backgroundImage: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    position: 'absolute',
-    width: '100%',
-    height: Dimensions.get('window').height + Number(StatusBar.currentHeight),
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
   },
   authentificationContainer: {
     width: '100%',
     height: '100%',
-    paddingTop: Number(StatusBar.currentHeight) + 40,
+    paddingTop: Number(StatusBar.currentHeight) + 70,
     paddingHorizontal: 20,
     paddingVertical: 30,
-    backgroundColor: 'rgba(255, 255, 255, 1)',
+    backgroundColor: THEME.WHITE_COLOR,
     alignItems: 'center',
   },
   userNameStyle: {
@@ -371,49 +330,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: THEME.DARK_GRAY_COLOR,
   },
-  centeredView: {
-    width: '100%',
-    top: 280,
-    position: 'absolute',
-  },
-  modalView: {
-    margin: 20,
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5
-  },
-  button: {
-    borderRadius: 15,
-    padding: 10,
-    width: '90%',
-    elevation: 2,
-    marginBottom: 15,
-  },
-  buttonOpen: {
-    backgroundColor: "#F194FF",
-  },
-  buttonClose: {
-    backgroundColor: "#2196F3",
-  },
-  textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
-    paddingVertical: 5,
-  },
-  modalText: {
-    marginBottom: 15,
-    textAlign: "center"
-  }
 });
 
 const confirmButtonStyle = StyleSheet.create<ICustomButtonStyle>({
@@ -436,8 +352,8 @@ const changeAvatarButtonStyle = StyleSheet.create<ICustomButtonStyle>({
   },
   buttonStyle: {
     textAlign: 'center',
-    backgroundColor: 'transparent',
-    borderColor: 'white',
+    backgroundColor: THEME.TRANSPARENT,
+    borderColor: THEME.WHITE_COLOR,
     elevation: 0,
     paddingHorizontal: 0,
     paddingVertical: 0,
