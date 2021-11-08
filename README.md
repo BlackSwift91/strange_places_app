@@ -1,2 +1,2 @@
 # strange_places_app
-React Natvie Strange Places App 
+React Natvie Strange Places App

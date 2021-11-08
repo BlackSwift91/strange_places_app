@@ -1,4 +1,5 @@
 apply plugin: "com.android.application"
+apply plugin: 'com.google.gms.google-services'
 
 import com.android.build.OutputFile
 
@@ -83,6 +84,9 @@ project.ext.react = [
 
 apply from: "../../node_modules/react-native/react.gradle"
 
+apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
+
+
 /**
  * Set this to true to create two separate APKs instead of one:
  *   - An APK that only works on ARM devices
@@ -134,8 +138,10 @@ android {
         applicationId "com.strange_places_app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
+        vectorDrawables.useSupportLibrary = true
         versionCode 1
         versionName "1.0"
+        missingDimensionStrategy 'react-native-camera', 'general'
     }
     splits {
         abi {
@@ -193,7 +199,10 @@ dependencies {
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
+    implementation project(':react-native-camera')
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+
+    // implementation 'com.google.android.gms:play-services-maps:18.0.0'
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.fbjni'

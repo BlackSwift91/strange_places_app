@@ -1,0 +1,65 @@
+export type UserActions =
+  | { type: 'SET_UNIQUE_USER_ID'; payload: string }
+  | { type: 'SET_UNIQUE_USER_ID_DB_FIELD'; payload: string }
+  | {
+      type: 'SET_ALL_USER_DATA';
+      payload: {
+        _id: string;
+        about_user: string;
+        avatar_url: string;
+        first_name: string;
+        last_name: string;
+        location: {
+          city: string;
+          country: string;
+        };
+        user_id: string;
+        user_name: string;
+      };
+    };
+
+export type LoginActions =
+  | { type: 'IS_NEW_USER'; payload: boolean }
+  | { type: 'TEST'; payload: string };
+
+export function setAllUserData(
+  user_id: string,
+  _id: string,
+  user_name: string,
+  first_name: string,
+  last_name: string,
+  about_user: string,
+  avatar_url: string,
+  location: {
+    city: string;
+    country: string;
+  },
+): UserActions {
+  return {
+    type: 'SET_ALL_USER_DATA',
+    payload: {
+      _id,
+      about_user,
+      avatar_url,
+      first_name,
+      last_name,
+      location,
+      user_id,
+      user_name,
+    },
+  };
+}
+
+export function setIsNewUser(user_id: boolean): LoginActions {
+  return {
+    type: 'IS_NEW_USER',
+    payload: user_id,
+  };
+}
+
+// export function userPasswordChangeInput(password: string): LoginAction {
+//   return {
+//     type: 'USER_PASSWORD_INPUT_CHANGE',
+//     payload: password,
+//   };
+// }

@@ -1,0 +1,48 @@
+{
+  "_comment": "src/localization/en/translation.json",
+  "startScreen": {
+    "appGreeting": "Welcome to Strange Places",
+    "appDescription": "Travel, discover and share amazing places around you",
+    "signInButton": "Sign In",
+    "signUpButton": "Sign Up",
+    "restorePasswordButton": "Restore password"
+  },
+  "signInScreen": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "restorePassword": "Restore password",
+    "alertInvalidEmail": "This email address is invalid!",
+    "alertWrongPassword": "Wrong Password!",
+    "alertUserNotFound": "No such user with this email!",
+    "alertInputEmail": "Please input youl email",
+    "alertPasswordLength": "The password must be at least six symbols",
+    "textInputPassword": "Password",
+    "textInputUserEmail": "User Email"
+  },
+  "signUpScreen": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "restorePassword": "Restore password",
+    "alertEmailInUse": "This email address is already in use!",
+    "alertInvalidEmail": "This email address is invalid!",
+    "alertUserNotFound": "No such user with this email!",
+    "alertInputEmail": "Please input youl email",
+    "alertPasswordLength": "The password must be at least six symbols",
+    "alertInputEmailEqual": "Passwords must be equal",
+    "textInputPassword": "Password",
+    "textInputPasswordRepeat": "Repeat Password",
+    "textInputUserEmail": "User Email"
+  },
+  "imageSourceModal": {
+    "makeNewPhoto": "Make a new photo",
+    "selectFromLibrary": "Select from library"
+  },
+  "signUpProfileScreen": {
+    "changeAvatar": "Change your avatar",
+    "userFirstName": "First Name",
+    "userLastName": "Last Name",
+    "userAboutInfo": "About Info",
+    "userLocation": "Your location",
+    "confirmButton": "Confirm"
+  }
+}
