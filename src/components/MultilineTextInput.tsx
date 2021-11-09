@@ -15,10 +15,9 @@ interface IProfileTextInputProps {
   value?: string;
   placeholder: string;
   onChangeTextHandler: (value: string) => void;
-  onFocusHandler?: () => void;
 }
 
-export const ProfileTextInput: React.FC<IProfileTextInputProps> = props => {
+export const MultilineTextInput: React.FC<IProfileTextInputProps> = props => {
   return (
     <View style={styles.wrapper}>
       <Text style={styles.label}>{props.textLabel}</Text>
@@ -26,8 +25,13 @@ export const ProfileTextInput: React.FC<IProfileTextInputProps> = props => {
         placeholder={props.placeholder}
         placeholderTextColor={THEME.DARK_GRAY_COLOR}
         style={styles.textInput}
+        spellCheck={false}
+        autoCorrect={false}
         onChangeText={value => props.onChangeTextHandler(value)}
         value={props.value}
+        multiline={true}
+        returnKeyType={'none'}
+        maxLength={320}
       />
     </View>
   );
@@ -46,7 +50,6 @@ const styles = StyleSheet.create<IProfileTextInputStyle>({
   },
   label: {
     alignSelf: 'flex-start',
-    paddingLeft: 0,
     color: THEME.BLACK_COLOR,
   },
   textInput: {
@@ -59,7 +62,7 @@ const styles = StyleSheet.create<IProfileTextInputStyle>({
   },
   alertStyle: {
     backgroundColor: 'rgba(255, 0, 0, 0.1)',
-    borderColor: 'red',
+    borderColor: THEME.RED_COLOR,
     borderWidth: 1,
   },
 });

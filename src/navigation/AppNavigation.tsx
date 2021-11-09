@@ -142,7 +142,7 @@ export const AppNavigator: React.FC = () => {
           title: 'Add New Place',
           headerMode: 'screen',
           headerTintColor: THEME.MAIN_COLOR,
-          headerTransparent: true,
+          headerTransparent: false,
         }}
       />
       <Stack.Screen

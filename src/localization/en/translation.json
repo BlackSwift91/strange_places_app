@@ -44,5 +44,14 @@
     "userAboutInfo": "About Info",
     "userLocation": "Your location",
     "confirmButton": "Confirm"
-  }
+  },
+  "addNewPostScreen": {
+    "postTitleLabel": "Add Title",
+    "postTitlePlaceholder": "Add your post title",
+    "postDescriptionLabel": "Add description",
+    "postDescriptionPlaceholder": "Add description",
+    "postLocation": "Add Location",
+    "submitButton": "Add Post",
+
+  },
 }
