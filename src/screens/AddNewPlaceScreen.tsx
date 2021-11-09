@@ -8,38 +8,56 @@ import {
   Image,
   Dimensions,
   TouchableOpacity,
+  ViewStyle,
 } from 'react-native';
-import { ProfileTextInput } from './../components/ProfileTextInput';
+import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
+import firestore from '@react-native-firebase/firestore';
 import { addImage } from '../images/addImage';
 import { THEME } from '../theme';
 import { ImageSourceModal } from '../components/ImageSourceModal';
 import { pickPlaceFromGallery, pickPlaceFromCamera } from '../ImagePicker';
 import { requestCameraPermission } from '../AndroidPermissions';
-import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import { useTranslation } from 'react-i18next';
 import { MultilineTextInput } from './../components/MultilineTextInput';
 import { CustomButton } from '../components/CustomButton';
 import { ICustomButtonStyle } from '../interfaces/ICustomButtonStyle';
 import { useDispatch, useSelector } from 'react-redux';
-import { setUserLocation  } from '../store/actions/actions';
+import { setUserLocation } from '../store/actions/actions';
 import { IRootState } from '../store/index';
 
 const windowWidth = Dimensions.get('window').width;
 
-export const AddNewPlaceScreen = ({ navigation, route }) => {
+interface IImage {
+  uri: string;
+  width: number;
+  height: number;
+}
+
+interface IProps {
+  scrollView: ViewStyle;
+  insideWrapper: ViewStyle;
+  textLocationWrapper: ViewStyle;
+  map: ViewStyle;
+  mapWrapper: ViewStyle;
+  textLocation: ViewStyle;
+  imageContainer: ViewStyle;
+  textDescriptionWrapper: ViewStyle;
+}
+
+export const AddNewPlaceScreen = () => {
   const userCoordinates = useSelector((state: IRootState) => state.userLocationReducer);
-  const [postTitle, setPostTitle] = useState<string>('');
-  const [image, setImage] = useState({ uri: addImage, width: 150, height: 150 });
+  const userData = useSelector((state: IRootState) => state.userDataReducer);
+  const [isDefaultImage, setIsDefaultImage] = useState<boolean>(true);
+  const [postDescription, setPostDescription] = useState<string>('');
+  const [image, setImage] = useState<IImage>({ uri: addImage, width: 150, height: 150 });
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [postCoord, setPostCoord] = useState({
     _lat: userCoordinates.latitude,
     _long: userCoordinates.longitude,
   });
-  const [postDescription, setPostDescription] = useState<string>('');
 
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  console.log(postCoord);
 
   const showImageSelectionModal = async () => {
     await requestCameraPermission();
@@ -54,7 +72,8 @@ export const AddNewPlaceScreen = ({ navigation, route }) => {
     await setModalVisible(false);
     const resImagee = await pickPlaceFromCamera();
     if (resImagee) {
-      setImage(resImagee);
+      setImage({ uri: resImagee.uri, width: windowWidth - 30, height: windowWidth - 30 });
+      setIsDefaultImage(false);
     }
   };
 
@@ -63,23 +82,58 @@ export const AddNewPlaceScreen = ({ navigation, route }) => {
     const resImagee = await pickPlaceFromGallery();
     if (resImagee) {
       setImage({ uri: resImagee.uri, width: windowWidth - 30, height: windowWidth - 30 });
+      setIsDefaultImage(false);
     }
-  };
-
-  const changePostTitle = (text: string) => {
-    setPostTitle(text);
   };
 
   const changePostDescription = (text: string) => {
     setPostDescription(text);
   };
 
-  const test = () => {
+  const addPost = async () => {
     dispatch(setUserLocation(postCoord._lat, postCoord._long));
+    await firestore()
+      .collection('users')
+      .doc(userData._id)
+      .collection('places')
+      .add({
+        description: postDescription,
+        img: image.uri,
+        location: {
+          _lat: postCoord._lat,
+          _long: postCoord._long,
+        },
+        user_doc_id: userData._id,
+        user_id: userData.user_id,
+      });
+  };
+
+  const defaultImage = () => {
+    return (
+      <Image
+        source={{ uri: image.uri }}
+        style={{
+          width: image.width,
+          height: image.height,
+        }}
+      />
+    );
+  };
+
+  const userImage = () => {
+    return (
+      <Image
+        source={{ uri: image.uri }}
+        style={{
+          width: windowWidth - 30,
+          height: windowWidth - 30,
+        }}
+      />
+    );
   };
 
   return (
-    <ScrollView style={styles.wrapper}>
+    <ScrollView style={styles.scrollView}>
       <StatusBar
         animated={true}
         backgroundColor={THEME.WHITE_COLOR}
@@ -87,12 +141,12 @@ export const AddNewPlaceScreen = ({ navigation, route }) => {
         hidden={false}
         barStyle="dark-content"
       />
-      <View style={styles.container}>
-        <View style={styles.textTitleWrapper}>
-          <ProfileTextInput
-            textLabel={t('addNewPostScreen.postTitleLabel')}
-            placeholder={t('addNewPostScreen.postTitlePlaceholder')}
-            onChangeTextHandler={changePostTitle}
+      <View style={styles.insideWrapper}>
+        <View style={styles.textDescriptionWrapper}>
+          <MultilineTextInput
+            textLabel={t('addNewPostScreen.postDescriptionLabel')}
+            placeholder={t('addNewPostScreen.postDescriptionPlaceholder')}
+            onChangeTextHandler={changePostDescription}
           />
         </View>
         <ImageSourceModal
@@ -105,30 +159,17 @@ export const AddNewPlaceScreen = ({ navigation, route }) => {
           style={styles.imageContainer}
           onPress={showImageSelectionModal}
           activeOpacity={0.7}>
-          <Image
-            source={{ uri: image.uri }}
-            style={{
-              width: image.width,
-              height: image.height,
-            }}
-          />
+          {isDefaultImage ? defaultImage() : userImage()}
         </TouchableOpacity>
-        <View style={styles.textDescriptionWrapper}>
-          <MultilineTextInput
-            textLabel={t('addNewPostScreen.postDescriptionLabel')}
-            placeholder={t('addNewPostScreen.postDescriptionPlaceholder')}
-            onChangeTextHandler={changePostDescription}
-          />
-        </View>
         <View style={styles.textLocationWrapper}>
           <Text style={styles.textLocation}>{t('addNewPostScreen.postLocation')}</Text>
         </View>
-        <View style={styles.center}>
+        <View style={styles.mapWrapper}>
           <MapView
             style={styles.map}
             provider={PROVIDER_GOOGLE}
             mapType={'hybrid'}
-            region={{
+            initialRegion={{
               latitude: postCoord._lat,
               longitude: postCoord._long,
               latitudeDelta: 0.008,
@@ -153,7 +194,7 @@ export const AddNewPlaceScreen = ({ navigation, route }) => {
             buttonStyle={restorePasswordButtonStyle.buttonStyle}
             buttonTextStyle={restorePasswordButtonStyle.buttonTextStyle}
             buttonText={t('addNewPostScreen.submitButton')}
-            onPressHandler={test}
+            onPressHandler={addPost}
           />
         </View>
       </View>
@@ -161,20 +202,15 @@ export const AddNewPlaceScreen = ({ navigation, route }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  wrapper: {
+const styles = StyleSheet.create<IProps>({
+  scrollView: {
     flex: 1,
     backgroundColor: THEME.WHITE_COLOR,
   },
-  container: {
+  insideWrapper: {
     flex: 1,
     alignItems: 'center',
     marginTop: 0,
-  },
-  textTitleWrapper: {
-    paddingHorizontal: 15,
-    width: '100%',
-    marginTop: 20,
   },
   textDescriptionWrapper: {
     paddingHorizontal: 15,
@@ -184,13 +220,10 @@ const styles = StyleSheet.create({
   imageContainer: {
     marginTop: 20,
   },
-  text: {
-    color: 'black',
-  },
   textLocation: {
     color: THEME.BLACK_COLOR,
   },
-  center: {
+  mapWrapper: {
     marginTop: 10,
     marginBottom: 0,
     width: windowWidth - 30,
