@@ -18,6 +18,14 @@ export type UserActions =
       };
     };
 
+export type LocationActions = {
+  type: 'SET_USER_LOCATION';
+  payload: {
+    latitude: number;
+    longitude: number;
+  };
+};
+
 export type LoginActions =
   | { type: 'IS_NEW_USER'; payload: boolean }
   | { type: 'TEST'; payload: string };
@@ -54,6 +62,16 @@ export function setIsNewUser(user_id: boolean): LoginActions {
   return {
     type: 'IS_NEW_USER',
     payload: user_id,
+  };
+}
+
+export function setUserLocation(latitude: number, longitude: number): LocationActions {
+  return {
+    type: 'SET_USER_LOCATION',
+    payload: {
+      latitude,
+      longitude,
+    },
   };
 }
 

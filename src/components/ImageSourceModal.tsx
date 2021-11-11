@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Modal, View, Pressable, Text, TouchableWithoutFeedback, StyleSheet } from 'react-native';
+import { Modal, View, TouchableOpacity, Text, TouchableWithoutFeedback, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { THEME } from '../theme';
@@ -24,20 +24,22 @@ export const ImageSourceModal: React.FC<ImageSourceModal> = props => {
       <TouchableWithoutFeedback onPress={() => props.closeModal()}>
         <View style={styles.wrapper}>
           <View style={styles.modalScreen}>
-            <Pressable
+            <TouchableOpacity
+              activeOpacity={0.7}
               style={styles.button}
               onPress={() => {
                 props.makePhoto();
               }}>
               <Text style={styles.textStyle}>{t('imageSourceModal.makeNewPhoto')}</Text>
-            </Pressable>
-            <Pressable
+            </TouchableOpacity>
+            <TouchableOpacity
+              activeOpacity={0.7}
               style={styles.button}
               onPress={() => {
                 props.selectFromLibrary();
               }}>
               <Text style={styles.textStyle}>{t('imageSourceModal.selectFromLibrary')}</Text>
-            </Pressable>
+            </TouchableOpacity>
           </View>
         </View>
       </TouchableWithoutFeedback>

@@ -1,9 +1,9 @@
-import { SET_UNIQUE_USER_ID, SET_ALL_USER_DATA, IS_NEW_USER } from '../types';
-import { UserActions, LoginActions } from '../actions/actions';
+import { SET_UNIQUE_USER_ID, SET_ALL_USER_DATA, IS_NEW_USER, SET_USER_LOCATION } from '../types';
+import { UserActions, LoginActions, LocationActions } from '../actions/actions';
 // import { ILoginState } from '../../interfaces/ILoginState';
 // import { IUserData } from '../../interfaces/IUserData';
 
-interface IUserData {
+export interface IUserData {
   _id: string;
   about_user: string;
   avatar_url: string;
@@ -15,6 +15,15 @@ interface IUserData {
   };
   user_id: string;
   user_name: string;
+}
+
+export interface IUserLocation {
+  latitude: number;
+  longitude: number;
+}
+
+export interface IAuthData {
+  isNewUser: boolean;
 }
 
 const initialUserState: IUserData = {
@@ -29,6 +38,15 @@ const initialUserState: IUserData = {
   },
   user_id: '',
   user_name: '',
+};
+
+const initialUserLocation: IUserLocation = {
+  latitude: 10.0,
+  longitude: 12,
+};
+
+const initialAuthState: IAuthData = {
+  isNewUser: false,
 };
 
 export const userDataReducer = (state = initialUserState, action: UserActions): IUserData => {
@@ -60,20 +78,27 @@ export const userDataReducer = (state = initialUserState, action: UserActions): 
   return state;
 };
 
-interface IAuthData {
-  isNewUser: boolean;
-}
-
-const initialAuthState: IAuthData = {
-  isNewUser: false,
-};
-
 export const authDataReducer = (state = initialAuthState, action: LoginActions) => {
   console.log(action.type);
   switch (action.type) {
     case IS_NEW_USER:
       console.log('INU', action.payload);
       return { ...state, isNewUser: action.payload };
+    default:
+      state;
+  }
+  return state;
+};
+
+export const userLocationReducer = (state = initialUserLocation, action: LocationActions) => {
+  console.log(action.type);
+  switch (action.type) {
+    case SET_USER_LOCATION:
+      console.log('LR', action.payload);
+      return {
+        latitude: action.payload.latitude,
+        longitude: action.payload.longitude,
+      };
     default:
       state;
   }

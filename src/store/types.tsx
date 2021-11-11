@@ -5,3 +5,4 @@ export const SET_UNIQUE_USER_ID = 'SET_UNIQUE_USER_ID';
 export const SET_USER_AVATAR = 'SET_USER_AVATAR';
 export const SET_ALL_USER_DATA = 'SET_ALL_USER_DATA';
 export const IS_NEW_USER = 'IS_NEW_USER';
+export const SET_USER_LOCATION = 'SET_USER_LOCATION';
