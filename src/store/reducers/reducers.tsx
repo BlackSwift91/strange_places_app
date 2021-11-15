@@ -41,8 +41,8 @@ const initialUserState: IUserData = {
 };
 
 const initialUserLocation: IUserLocation = {
-  latitude: 10.0,
-  longitude: 12,
+  latitude: 0,
+  longitude: 0,
 };
 
 const initialAuthState: IAuthData = {

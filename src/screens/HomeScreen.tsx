@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, FlatList } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, Image, FlatList } from 'react-native';
 import MapView from 'react-native-map-clustering';
 import { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import { DB } from '../../sglib.config';
@@ -7,10 +7,32 @@ import { THEME } from '../theme';
 import { NavigationButton } from '../components/NavigationButton';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { useSelector } from 'react-redux';
+import { IRootState } from '../store/index';
+import Geolocation from 'react-native-geolocation-service';
 
 export const HomeScreen = ({ navigation, route }) => {
+  const userLocation = useSelector((state: IRootState) => state.userLocationReducer);
   const [places, setPlaces] = useState([]);
   const [isMapView, setIsMapView] = useState(true);
+  console.log(userLocation);
+  let mapRef = useRef<MapView>(null);
+
+  const animateMap = () => {
+    mapRef.current?.animateToRegion({ // Takes a region object as parameter
+        latitude: userLocation.latitude,
+        longitude: userLocation.longitude,
+        latitudeDelta: 0.4,
+        longitudeDelta: 0.4,
+      },
+      1000,
+    );
+  };
+
+  useEffect(() => {
+    console.log('1111');
+    animateMap();
+  }, [userLocation]);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -49,17 +71,38 @@ export const HomeScreen = ({ navigation, route }) => {
     return (
       <View style={styles.center}>
         <MapView
+          ref={mapRef}
           style={styles.map}
           provider={PROVIDER_GOOGLE}
           mapType={'hybrid'}
           initialRegion={{
-            latitude: 10,
-            longitude: 12,
+            latitude: userLocation.latitude,
+            longitude: userLocation.longitude,
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
           }}
+          // region={{
+          //   latitude: userLocation.latitude,
+          //   longitude: userLocation.longitude,
+          //   latitudeDelta: 0.0922,
+          //   longitudeDelta: 0.0421,
+          // }}
+          showsMyLocationButton={true}
+          // onUserLocationChange={locationChangedResult => console.log(locationChangedResult)}
+          initialCamera={{
+            center: {
+              latitude: userLocation.latitude,
+              longitude: userLocation.longitude,
+            },
+            pitch: 45,
+            heading: 90,
+            altitude: 1000,
+            zoom: 10,
+          }}
+          // region={defaultRegion}
           clusterColor={THEME.MAIN_COLOR}
           zoomEnabled={true}
+          // loadingEnabled={true}
           showsUserLocation={true}>
           {places.map((marker, index) => (
             <Marker
@@ -148,7 +191,7 @@ const styles = StyleSheet.create({
     width: 300,
   },
   container: {
-
     marginHorizontal: 15,
-  }
+  },
+
 });

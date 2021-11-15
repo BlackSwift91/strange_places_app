@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-export const AboutScreen = ({navigation, route}) => {
+export const AboutScreen = () => {
   // console.log('1111');
 
   return (
