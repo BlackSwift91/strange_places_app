@@ -21,8 +21,7 @@ import { useTranslation } from 'react-i18next';
 import { MultilineTextInput } from './../components/MultilineTextInput';
 import { CustomButton } from '../components/CustomButton';
 import { ICustomButtonStyle } from '../interfaces/ICustomButtonStyle';
-import { useDispatch, useSelector } from 'react-redux';
-import { setUserLocation } from '../store/actions/actions';
+import { useSelector } from 'react-redux';
 import { IRootState } from '../store/index';
 
 const windowWidth = Dimensions.get('window').width;
@@ -44,7 +43,7 @@ interface IProps {
   textDescriptionWrapper: ViewStyle;
 }
 
-export const AddNewPlaceScreen = () => {
+export const AddNewPlaceScreen = ({ navigation }) => {
   const userCoordinates = useSelector((state: IRootState) => state.userLocationReducer);
   const userData = useSelector((state: IRootState) => state.userDataReducer);
   const [isDefaultImage, setIsDefaultImage] = useState<boolean>(true);
@@ -56,7 +55,6 @@ export const AddNewPlaceScreen = () => {
     _long: userCoordinates.longitude,
   });
 
-  const dispatch = useDispatch();
   const { t } = useTranslation();
 
   const showImageSelectionModal = async () => {
@@ -91,7 +89,6 @@ export const AddNewPlaceScreen = () => {
   };
 
   const addPost = async () => {
-    dispatch(setUserLocation(postCoord._lat, postCoord._long));
     await firestore()
       .collection('users')
       .doc(userData._id)
@@ -106,6 +103,11 @@ export const AddNewPlaceScreen = () => {
         user_doc_id: userData._id,
         user_id: userData.user_id,
       });
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'AddNewPlaceScreen' }],
+    });
+    navigation.navigate('HomeScreen', { postAdded: true });
   };
 
   const defaultImage = () => {
@@ -170,8 +172,8 @@ export const AddNewPlaceScreen = () => {
             provider={PROVIDER_GOOGLE}
             mapType={'hybrid'}
             initialRegion={{
-              latitude: postCoord._lat,
-              longitude: postCoord._long,
+              latitude: userCoordinates.latitude,
+              longitude: userCoordinates.longitude,
               latitudeDelta: 0.008,
               longitudeDelta: 0.008,
             }}
@@ -247,6 +249,7 @@ const restorePasswordButtonStyle = StyleSheet.create<ICustomButtonStyle>({
   buttonContainerStyle: {
     width: '90%',
     marginVertical: 40,
+    marginBottom: 120,
   },
   buttonStyle: {
     backgroundColor: THEME.WHITE_COLOR,
