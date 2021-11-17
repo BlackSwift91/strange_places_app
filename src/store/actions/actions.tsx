@@ -18,13 +18,27 @@ export type UserActions =
       };
     };
 
-export type LocationActions = {
-  type: 'SET_USER_LOCATION';
-  payload: {
-    latitude: number;
-    longitude: number;
-  };
-};
+export type LocationActions =
+  | {
+      type: 'SET_USER_LOCATION';
+      payload: {
+        latitude: number;
+        longitude: number;
+      };
+    }
+  | {
+      type: 'SET_IS_USER_POSITION_LOCATED';
+      payload: {
+        isUserPositionLocated: boolean;
+      };
+    }
+  | {
+      type: 'SET_MAP_DELTA';
+      payload: {
+        latitudeDelta: number;
+        longitudeDelta: number;
+      };
+    };
 
 export type LoginActions =
   | { type: 'IS_NEW_USER'; payload: boolean }
@@ -71,6 +85,25 @@ export function setUserLocation(latitude: number, longitude: number): LocationAc
     payload: {
       latitude,
       longitude,
+    },
+  };
+}
+
+export function setIsUserPositionLocated(isUserPositionLocated: boolean): LocationActions {
+  return {
+    type: 'SET_IS_USER_POSITION_LOCATED',
+    payload: {
+      isUserPositionLocated,
+    },
+  };
+}
+
+export function setMapDelta(latitudeDelta: number, longitudeDelta: number): LocationActions {
+  return {
+    type: 'SET_MAP_DELTA',
+    payload: {
+      latitudeDelta,
+      longitudeDelta,
     },
   };
 }

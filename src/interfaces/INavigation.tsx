@@ -14,6 +14,8 @@ type AuthStackNavigatorParamsList = {
   };
   TextInputModalScreen: { textValue: string; textLabel: string; placeholder: string };
   SetUserLocationModalScreen: { city: string; country: string };
+  AddNewPlaceScreen: undefined;
+  HomeScreen: { postAdded: boolean };
 };
 
 export interface StartScreenProps {
@@ -40,5 +42,13 @@ export interface ITextInputModalScreen {
 
 export interface ISetUserLocationModalScreen {
   navigation: StackNavigationProp<AuthStackNavigatorParamsList, 'SetUserLocationModalScreen'>;
+  route: RouteProp<AuthStackNavigatorParamsList, 'SetUserLocationModalScreen'>;
+}
+
+export interface IAddNewPlaceScreen {
+  navigation: StackNavigationProp<AuthStackNavigatorParamsList, 'AddNewPlaceScreen'>;
+}
+export interface IHomeScreen {
+  navigation: StackNavigationProp<AuthStackNavigatorParamsList, 'HomeScreen'>;
   route: RouteProp<AuthStackNavigatorParamsList, 'SetUserLocationModalScreen'>;
 }

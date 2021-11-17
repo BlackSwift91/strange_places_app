@@ -1,4 +1,11 @@
-import { SET_UNIQUE_USER_ID, SET_ALL_USER_DATA, IS_NEW_USER, SET_USER_LOCATION } from '../types';
+import {
+  SET_UNIQUE_USER_ID,
+  SET_ALL_USER_DATA,
+  IS_NEW_USER,
+  SET_USER_LOCATION,
+  SET_IS_USER_POSITION_LOCATED,
+  SET_MAP_DELTA,
+} from '../types';
 import { UserActions, LoginActions, LocationActions } from '../actions/actions';
 // import { ILoginState } from '../../interfaces/ILoginState';
 // import { IUserData } from '../../interfaces/IUserData';
@@ -20,6 +27,9 @@ export interface IUserData {
 export interface IUserLocation {
   latitude: number;
   longitude: number;
+  latitudeDelta: number;
+  longitudeDelta: number;
+  isUserPositionLocated: boolean;
 }
 
 export interface IAuthData {
@@ -43,6 +53,9 @@ const initialUserState: IUserData = {
 const initialUserLocation: IUserLocation = {
   latitude: 0,
   longitude: 0,
+  latitudeDelta: 0.01,
+  longitudeDelta: 0.01,
+  isUserPositionLocated: false,
 };
 
 const initialAuthState: IAuthData = {
@@ -50,14 +63,14 @@ const initialAuthState: IAuthData = {
 };
 
 export const userDataReducer = (state = initialUserState, action: UserActions): IUserData => {
-  console.log('reducer');
-  console.log(action.type);
+  // console.log('reducer');
+  // console.log(action.type);
   switch (action.type) {
     case SET_UNIQUE_USER_ID:
       console.log('UID', action.payload);
       return { ...state, user_id: action.payload };
     case SET_ALL_USER_DATA:
-      console.log('SALUD', action.payload);
+      // console.log('SALUD', action.payload);
       return {
         ...state,
         _id: action.payload._id,
@@ -79,7 +92,7 @@ export const userDataReducer = (state = initialUserState, action: UserActions): 
 };
 
 export const authDataReducer = (state = initialAuthState, action: LoginActions) => {
-  console.log(action.type);
+  // console.log(action.type);
   switch (action.type) {
     case IS_NEW_USER:
       console.log('INU', action.payload);
@@ -96,8 +109,22 @@ export const userLocationReducer = (state = initialUserLocation, action: Locatio
     case SET_USER_LOCATION:
       console.log('LR', action.payload);
       return {
+        ...state,
         latitude: action.payload.latitude,
         longitude: action.payload.longitude,
+      };
+    case SET_MAP_DELTA:
+      console.log('MD', action.payload);
+      return {
+        ...state,
+        latitudeDelta: action.payload.latitudeDelta,
+        longitudeDelta: action.payload.longitudeDelta,
+      };
+    case SET_IS_USER_POSITION_LOCATED:
+      console.log('UPL1', action.payload);
+      return {
+        ...state,
+        isUserPositionLocated: action.payload.isUserPositionLocated,
       };
     default:
       state;

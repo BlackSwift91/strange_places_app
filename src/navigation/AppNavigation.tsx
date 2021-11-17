@@ -27,22 +27,23 @@ export interface IUser {
 export const AppNavigator: React.FC = () => {
   const dispatch = useDispatch();
   const isNewUser = useSelector((state: IRootState) => state.authDataReducer.isNewUser);
-  const date = useSelector(state => state);
   const [user, setUser] = useState();
   const [initializing, setInitializing] = useState(true);
 
-  
-
-  function onAuthStateChanged(user) {
-    setUser(user);
-    if (initializing) setInitializing(false);
+  function onAuthStateChanged(authData) {
+    setUser(authData);
+    if (initializing) {
+      setInitializing(false);
+    }
 
     const data: IUser[] = [];
     const location = {
       city: '',
       country: '',
     };
-    if (!user) return;
+    if (!user) {
+      return;
+    }
     firestore()
       .collection('users')
       .where('user_id', '==', `${user.uid}`)
@@ -74,7 +75,7 @@ export const AppNavigator: React.FC = () => {
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber; // unsubscribe on unmount
-  }, []);
+  });
 
   if (initializing) {
     return null;

@@ -1,38 +1,78 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Image, FlatList } from 'react-native';
 import MapView from 'react-native-map-clustering';
-import { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import { DB } from '../../sglib.config';
-import { THEME } from '../theme';
-import { NavigationButton } from '../components/NavigationButton';
-import { HeaderButtons, Item } from 'react-navigation-header-buttons';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useSelector } from 'react-redux';
+import { HeaderButtons, Item } from 'react-navigation-header-buttons';
+import { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
+import { View, Text, StyleSheet, Image, FlatList, Dimensions, StatusBar, TouchableOpacity } from 'react-native';
+import { useDispatch } from 'react-redux';
+import { setMapDelta } from '../store/actions/actions';
+
+import { THEME } from '../theme';
 import { IRootState } from '../store/index';
-import Geolocation from 'react-native-geolocation-service';
+import { NavigationButton } from '../components/NavigationButton';
+import { IHomeScreen } from '../interfaces/INavigation';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-export const HomeScreen = ({ navigation, route }) => {
-  const userLocation = useSelector((state: IRootState) => state.userLocationReducer);
-  const [places, setPlaces] = useState([]);
-  const [isMapView, setIsMapView] = useState(true);
-  console.log(userLocation);
-  let mapRef = useRef<MapView>(null);
 
-  const animateMap = () => {
-    mapRef.current?.animateToRegion({ // Takes a region object as parameter
-        latitude: userLocation.latitude,
-        longitude: userLocation.longitude,
-        latitudeDelta: 0.4,
-        longitudeDelta: 0.4,
-      },
-      1000,
-    );
+setMapDelta
+
+interface IPostData {
+  description: string;
+  img: string;
+  location: {
+    _lat: number;
+    _long: number;
   };
+  user_doc_id: string;
+  user_id: string;
+}
+
+interface IMapDelta {
+  latitudeDelta: number;
+  longitudeDelta: number;
+}
+
+interface IMapCoordinates {
+  latitude: number;
+  longitude: number;
+  latitudeDelta: number;
+  longitudeDelta: number;
+}
+
+export const HomeScreen: React.FC<IHomeScreen> = ({ navigation, route }) => {
+  const dispatch = useDispatch();
+  const userLocation = useSelector((state: IRootState) => state.userLocationReducer);
+  const userData = useSelector((state: IRootState) => state.userDataReducer);
+  const [places, setPlaces] = useState<IPostData[]>([]);
+  const [isMapView, setIsMapView] = useState(true);
+  const [isUserTracking, setIsUserTracking] = useState(false);
+
+  const mapRef = useRef<MapView>(null);
 
   useEffect(() => {
-    console.log('1111');
-    animateMap();
+    if (!userLocation.isUserPositionLocated) {
+      animateMap();
+    }
   }, [userLocation]);
+
+  useEffect(() => {
+    if (isUserTracking) {
+      animateMap();
+    }
+  }, [userLocation, isUserTracking]);
+
+  const animateMap = () => {
+    mapRef.current?.animateToRegion(
+      {
+        latitude: userLocation.latitude,
+        longitude: userLocation.longitude,
+        latitudeDelta: userLocation.latitudeDelta,
+        longitudeDelta: userLocation.longitudeDelta,
+      },
+      700,
+    );
+  };
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -53,7 +93,7 @@ export const HomeScreen = ({ navigation, route }) => {
   }, [navigation, isMapView]);
 
   const getData = async () => {
-    const result = await DB.places.getMyPlaces('IpEUywJy7ELLP1e4UDr4');
+    const result: any = await DB.places.getMyPlaces(userData._id);
     if (result) {
       setPlaces(result);
     }
@@ -70,39 +110,46 @@ export const HomeScreen = ({ navigation, route }) => {
   if (isMapView) {
     return (
       <View style={styles.center}>
+        <StatusBar
+          animated={true}
+          backgroundColor="transparent"
+          translucent={true}
+          hidden={false}
+          barStyle="dark-content"
+        />
+        <View style={styles.text1}>
+          <TouchableOpacity onPress={() => setIsUserTracking(!isUserTracking)}>
+            <MaterialCommunityIcons
+              name="navigation"
+              color={isUserTracking ? THEME.MAIN_COLOR : THEME.DARK_GRAY_COLOR}
+              size={24}
+            />
+          </TouchableOpacity>
+        </View>
         <MapView
           ref={mapRef}
           style={styles.map}
           provider={PROVIDER_GOOGLE}
           mapType={'hybrid'}
+          onRegionChangeComplete={e => {
+            if ((e.latitudeDelta.toFixed(6) !== userLocation.latitudeDelta.toFixed(6)) && (e.longitudeDelta.toFixed(6) !== userLocation.longitudeDelta.toFixed(6))) {
+              dispatch(setMapDelta(e.latitudeDelta, e.longitudeDelta));
+            }
+          }}
           initialRegion={{
             latitude: userLocation.latitude,
             longitude: userLocation.longitude,
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
           }}
-          // region={{
-          //   latitude: userLocation.latitude,
-          //   longitude: userLocation.longitude,
-          //   latitudeDelta: 0.0922,
-          //   longitudeDelta: 0.0421,
-          // }}
-          showsMyLocationButton={true}
-          // onUserLocationChange={locationChangedResult => console.log(locationChangedResult)}
-          initialCamera={{
-            center: {
-              latitude: userLocation.latitude,
-              longitude: userLocation.longitude,
-            },
-            pitch: 45,
-            heading: 90,
-            altitude: 1000,
-            zoom: 10,
+          loadingEnabled={true}
+          onPanDrag={e => {
+            setIsUserTracking(false);
           }}
-          // region={defaultRegion}
+          showsMyLocationButton={true}
+          followsUserLocation={true}
           clusterColor={THEME.MAIN_COLOR}
           zoomEnabled={true}
-          // loadingEnabled={true}
           showsUserLocation={true}>
           {places.map((marker, index) => (
             <Marker
@@ -153,6 +200,7 @@ export const HomeScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   center: {
     flex: 1,
+    height: Dimensions.get('window').height + Number(StatusBar.currentHeight),
   },
   text: {
     color: 'black',
@@ -193,5 +241,16 @@ const styles = StyleSheet.create({
   container: {
     marginHorizontal: 15,
   },
-
+  text1: {
+    position: 'absolute',
+    bottom: 72,
+    width: 36,
+    height: 36,
+    right: 13,
+    zIndex: 100000,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    borderRadius: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });

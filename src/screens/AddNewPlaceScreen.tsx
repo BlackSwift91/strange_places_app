@@ -23,6 +23,7 @@ import { CustomButton } from '../components/CustomButton';
 import { ICustomButtonStyle } from '../interfaces/ICustomButtonStyle';
 import { useSelector } from 'react-redux';
 import { IRootState } from '../store/index';
+import { IAddNewPlaceScreen } from '../interfaces/INavigation';
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -43,7 +44,7 @@ interface IProps {
   textDescriptionWrapper: ViewStyle;
 }
 
-export const AddNewPlaceScreen = ({ navigation }) => {
+export const AddNewPlaceScreen: React.FC<IAddNewPlaceScreen> = ({ navigation }) => {
   const userCoordinates = useSelector((state: IRootState) => state.userLocationReducer);
   const userData = useSelector((state: IRootState) => state.userDataReducer);
   const [isDefaultImage, setIsDefaultImage] = useState<boolean>(true);
