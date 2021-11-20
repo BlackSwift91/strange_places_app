@@ -1,45 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import Geolocation from 'react-native-geolocation-service';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { HomeScreen } from '../screens/HomeScreen';
-import { AddNewPlaceScreen } from '../screens/AddNewPlaceScreen';
-import { THEME } from '../theme';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { Image, Text, Alert, StyleSheet } from 'react-native';
 
-import { addPost } from '../images/addPost';
+import { useTranslation } from 'react-i18next';
+import { AddNewPlaceScreen } from '../screens/AddNewPlaceScreen';
+import { Text, Alert, StyleSheet } from 'react-native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
+import { THEME } from '../theme';
+import { IRootState } from '../store/index';
+import { ProfileNavigator } from './ProfileNavigator';
+import { HomeNavigator } from './HomeNavigator';
+import { AddPostTabBarButton } from '../components/AddPostTabBarButton';
 import { hasLocationPermission } from '../AndroidPermissions';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUserLocation, setIsUserPositionLocated } from '../store/actions/actions';
-import { IRootState } from '../store/index';
 
 const Tab = createBottomTabNavigator();
 
-const AddPostTabBarButton = () => {
-  return (
-    <TouchableOpacity style={styles.appPostButtonContainer}>
-      <Image source={{ uri: addPost }} style={styles.appPostButtonImage} />
-    </TouchableOpacity>
-  );
-};
-
 export const TabNavigator = () => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
+
   const userLocation = useSelector((state: IRootState) => state.userLocationReducer);
-  console.log('TAB', userLocation);
-  
 
-  useEffect(() => {
-    (async () => {
-      try {
-        getLocation();
-      } catch (e) {
-        console.log('ERROR WHILE FIRST INIT', e);
-      }
-    })();
-  }, []);
-
-  const getLocation = async () => {
+  const getLocation = useCallback(async () => {
     const hasPermission: boolean = await hasLocationPermission();
     console.log('Start locating gps position');
     if (!hasPermission) {
@@ -91,21 +75,32 @@ export const TabNavigator = () => {
         showLocationDialog: true,
       },
     );
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        getLocation();
+      } catch (e) {
+        console.log('ERROR WHILE FIRST INIT', e);
+      }
+    })();
+  }, [getLocation]);
 
   return (
     <Tab.Navigator
+      backBehavior={'initialRoute'}
       screenOptions={{
         tabBarShowLabel: false,
         tabBarStyle: { ...styles.navigator },
+        headerShown: false,
       }}>
       <Tab.Screen
-        name="HomeScreen"
-        component={HomeScreen}
+        name="HomeScreenNavigator"
+        component={HomeNavigator}
         options={{
-          title: 'Home',
-          headerTitleAlign: 'center',
-          tabBarIcon: () => <Text style={styles.buttonText}>Home</Text>,
+          tabBarIcon: () => <Text style={styles.buttonText}>{t('tabNavigator.homeButton')}</Text>,
           headerTintColor: THEME.MAIN_COLOR,
         }}
       />
@@ -113,21 +108,20 @@ export const TabNavigator = () => {
         name="AddNewPlaceScreen"
         component={AddNewPlaceScreen}
         options={{
+          headerShown: true,
           tabBarIcon: () => <AddPostTabBarButton />,
-          title: 'Add new post',
           headerTintColor: THEME.MAIN_COLOR,
-          headerTransparent: false,
         }}
       />
       <Tab.Screen
-        name="AddNewPlaceScreen1"
-        component={AddNewPlaceScreen}
+        name="ProfileNavigator"
+        component={ProfileNavigator}
         options={{
-          title: 'Add New Place',
           headerTintColor: THEME.MAIN_COLOR,
-          headerTransparent: true,
           headerShown: false,
-          tabBarIcon: () => <Text style={styles.buttonText}>Profile</Text>,
+          tabBarIcon: () => (
+            <Text style={styles.buttonText}>{t('tabNavigator.profileButton')}</Text>
+          ),
         }}
       />
     </Tab.Navigator>
@@ -135,17 +129,6 @@ export const TabNavigator = () => {
 };
 
 const styles = StyleSheet.create({
-  appPostButtonContainer: {
-    top: -12,
-    backgroundColor: '#ffffff',
-    borderRadius: 70,
-    borderWidth: 10,
-    borderColor: '#ffffff',
-  },
-  appPostButtonImage: {
-    width: 60,
-    height: 60,
-  },
   navigator: {
     position: 'absolute',
     bottom: 0,

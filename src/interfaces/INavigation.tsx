@@ -1,10 +1,16 @@
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
+import { NavigatorScreenParams } from '@react-navigation/native';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 
-type AuthStackNavigatorParamsList = {
+import { IPostData } from '../interfaces/IPostData';
+
+type NavigatorParamsList = {
   StartScreen: undefined;
   SignInScreen: undefined;
   SignUpScreen: undefined;
+  TextInputModalScreen: { textValue: string; textLabel: string; placeholder: string };
+  SetUserLocationModalScreen: { city: string; country: string };
   SignUpProfileScreen: {
     textInput?: string;
     user_name?: string;
@@ -12,43 +18,70 @@ type AuthStackNavigatorParamsList = {
     city?: string;
     country?: string;
   };
+};
+
+type HomeNavigatorParamsList = {
+  HomeScreen: undefined;
+  PlaceDetail: { params: { post: IPostData } };
+  SignUpScreen: undefined;
   TextInputModalScreen: { textValue: string; textLabel: string; placeholder: string };
-  SetUserLocationModalScreen: { city: string; country: string };
+};
+
+type TabNavigatorParamsList = {
+  HomeScreenNavigator: undefined;
   AddNewPlaceScreen: undefined;
-  HomeScreen: { postAdded: boolean };
+  ProfileNavigator: undefined;
+  // ProfileNavigator: { screen: string; params: { post: IPostData } };
+};
+
+type ProfileParamsList = {
+  AboutScreen: { word: string; definition: string };
+};
+
+type RootNavigatorParamsList = {
+  AboutScreen: NavigatorScreenParams<ProfileParamsList>;
 };
 
 export interface StartScreenProps {
-  navigation: StackNavigationProp<AuthStackNavigatorParamsList, 'StartScreen'>;
+  navigation: StackNavigationProp<NavigatorParamsList, 'StartScreen'>;
 }
 
 export interface ISignInScreenProps {
-  navigation: StackNavigationProp<AuthStackNavigatorParamsList, 'SignInScreen'>;
+  navigation: StackNavigationProp<NavigatorParamsList, 'SignInScreen'>;
 }
 export interface SignUpScreenProps {
-  navigation: StackNavigationProp<AuthStackNavigatorParamsList, 'SignUpScreen'>;
-  route: RouteProp<AuthStackNavigatorParamsList, 'SignUpScreen'>;
+  navigation: StackNavigationProp<NavigatorParamsList, 'SignUpScreen'>;
+  route: RouteProp<NavigatorParamsList, 'SignUpScreen'>;
 }
 
 export interface ISignUpProfileScreen {
-  navigation: StackNavigationProp<AuthStackNavigatorParamsList, 'SignUpProfileScreen'>;
-  route: RouteProp<AuthStackNavigatorParamsList, 'SignUpProfileScreen'>;
+  navigation: StackNavigationProp<NavigatorParamsList, 'SignUpProfileScreen'>;
+  route: RouteProp<NavigatorParamsList, 'SignUpProfileScreen'>;
 }
 
 export interface ITextInputModalScreen {
-  navigation: StackNavigationProp<AuthStackNavigatorParamsList, 'TextInputModalScreen'>;
-  route: RouteProp<AuthStackNavigatorParamsList, 'TextInputModalScreen'>;
+  navigation: StackNavigationProp<NavigatorParamsList, 'TextInputModalScreen'>;
+  route: RouteProp<NavigatorParamsList, 'TextInputModalScreen'>;
 }
 
 export interface ISetUserLocationModalScreen {
-  navigation: StackNavigationProp<AuthStackNavigatorParamsList, 'SetUserLocationModalScreen'>;
-  route: RouteProp<AuthStackNavigatorParamsList, 'SetUserLocationModalScreen'>;
+  navigation: StackNavigationProp<NavigatorParamsList, 'SetUserLocationModalScreen'>;
+  route: RouteProp<NavigatorParamsList, 'SetUserLocationModalScreen'>;
 }
 
 export interface IAddNewPlaceScreen {
-  navigation: StackNavigationProp<AuthStackNavigatorParamsList, 'AddNewPlaceScreen'>;
+  navigation: BottomTabNavigationProp<TabNavigatorParamsList, 'AddNewPlaceScreen'>;
 }
+
 export interface IHomeScreen {
-  navigation: StackNavigationProp<AuthStackNavigatorParamsList, 'HomeScreen'>;
-  route: RouteProp<AuthStackNavigatorParamsList, 'SetUserLocationModalScreen'>;
+  navigation: StackNavigationProp<HomeNavigatorParamsList, 'HomeScreen'>;
+  route: RouteProp<HomeNavigatorParamsList, 'HomeScreen'>;
 }
+
+// export interface IHomeScreen {
+//   navigation: CompositeNavigationProp<
+//     BottomTabNavigationProp<TabNavigatorParamsList, 'HomeScreen'>,
+//     StackNavigationProp<RootNavigatorParamsList>
+//   >;
+//   route: RouteProp<TabNavigatorParamsList, 'HomeScreen'>;
+// }

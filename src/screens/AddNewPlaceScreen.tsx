@@ -108,7 +108,7 @@ export const AddNewPlaceScreen: React.FC<IAddNewPlaceScreen> = ({ navigation }) 
       index: 0,
       routes: [{ name: 'AddNewPlaceScreen' }],
     });
-    navigation.navigate('HomeScreen', { postAdded: true });
+    navigation.navigate('HomeScreenNavigator');
   };
 
   const defaultImage = () => {
@@ -139,10 +139,9 @@ export const AddNewPlaceScreen: React.FC<IAddNewPlaceScreen> = ({ navigation }) 
     <ScrollView style={styles.scrollView}>
       <StatusBar
         animated={true}
-        backgroundColor={THEME.WHITE_COLOR}
-        translucent={true}
+        backgroundColor={THEME.BLACK_COLOR}
         hidden={false}
-        barStyle="dark-content"
+        barStyle="light-content"
       />
       <View style={styles.insideWrapper}>
         <View style={styles.textDescriptionWrapper}>
