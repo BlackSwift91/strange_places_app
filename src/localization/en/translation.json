@@ -51,7 +51,14 @@
     "postDescriptionLabel": "Add description",
     "postDescriptionPlaceholder": "Add description",
     "postLocation": "Add Location",
-    "submitButton": "Add Post",
-
+    "submitButton": "Add Post"
   },
+  "tabNavigator": {
+    "homeButton": "Home",
+    "profileButton": "Profile"
+  },
+  "homeNavigator": {
+    "homeScreen": "Home",
+    "placeDetailScreen": "Place Details"
+  }
 }

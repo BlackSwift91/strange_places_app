@@ -113,7 +113,7 @@ export const SignInScreen: React.FC<ISignInScreenProps> = ({ navigation }) => {
       })
       .catch(error => {
         if (error.code === 'auth/invalid-email') {
-          changeErrorDescription(t('signInScreen.alertInvalidEmail'));
+          changeErrorDescription(t('signInScreen.homeScreen'));
           setLoginError(true);
         } else if (error.code === 'auth/user-not-found') {
           changeErrorDescription(t('signInScreen.alertUserNotFound'));

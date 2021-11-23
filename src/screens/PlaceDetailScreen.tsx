@@ -1,12 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-export const AboutScreen = () => {
-  // console.log('1111');
-
+export const PlaceDetailScreen = ({ navigation, route }) => {
   return (
     <View style={styles.center}>
-      <Text style={styles.text}>Это приложение для личных заметок</Text>
+      <Text style={styles.text}>PlaceDetailScreen</Text>
     </View>
   );
 };
