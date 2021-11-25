@@ -1,6 +1,13 @@
 export interface IUserData {
-  userName: string;
-  userPassword: string;
-  token: string;
-  profilePicture: string;
+  _id: string;
+  about_user: string;
+  avatar_url: string;
+  first_name: string;
+  last_name: string;
+  location: {
+    city: string;
+    country: string;
+  };
+  user_id: string;
+  user_name: string;
 }
