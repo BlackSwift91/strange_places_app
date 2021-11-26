@@ -94,7 +94,6 @@ export const HomeScreen: React.FC<IHomeScreen> = ({ navigation }) => {
       setAllPlaces(result.data);
       setUserPlaces(result.data.filter(item => item.user_id === userData.user_id));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userData]);
 
   useEffect(() => {
