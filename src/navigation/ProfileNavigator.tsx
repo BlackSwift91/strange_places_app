@@ -15,7 +15,7 @@ export const ProfileNavigator = () => {
     <Stack.Navigator
       initialRouteName="UserProfile"
       screenOptions={{
-        headerTransparent: true,
+        headerTransparent: false,
         headerTintColor: THEME.MAIN_COLOR,
       }}>
       <Stack.Screen
@@ -23,6 +23,7 @@ export const ProfileNavigator = () => {
         component={UserProfileScreen}
         options={{
           headerShown: true,
+
         }}
       />
       <Stack.Screen
