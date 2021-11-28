@@ -1,5 +1,6 @@
 import { IPostData } from './src/interfaces/IPostData';
 import { IDBPlaces } from './src/interfaces/IDBPlaces';
+import { IDBUsers } from './src/interfaces/IDBUsers';
 
 interface IUser {
   [key: string]: string;
@@ -9,7 +10,22 @@ interface IPlace {
   [key: string]: string;
 }
 
+interface IUserData {
+  _id: string;
+  about_user: string;
+  avatar_url: string;
+  first_name: string;
+  last_name: string;
+  location: {
+    city: string;
+    country: string;
+  };
+  user_id: string;
+  user_name: string;
+}
+
 export default class StuffyGranny {
+  DB: any;
   constructor(firestore, type = 'RN') {
     this.DB = type === 'RN' ? firestore() : firestore;
   }
@@ -29,7 +45,22 @@ export default class StuffyGranny {
           });
       });
     },
+    getUserData: (user_doc_id: string) => {
+      return new Promise<IDBUsers>((resolve, reject) => {
+        this.DB.collection('users')
+          .where('user_id', '==', user_doc_id)
+          .get()
+          .then((response: any) => {
+            const data: IUserData[] = [];
+            response.forEach((doc: any) => {
+              data.push({ ...doc.data(), _id: doc.id });
+            });
+            return resolve({ ok: true, status: 200, data: data });
+          });
+      });
+    },
   };
+
 
   places = {
     deletePlace: (item_doc_id: string, my_doc_id: string) => {
@@ -40,7 +71,7 @@ export default class StuffyGranny {
           .doc(item_doc_id)
           .delete()
           .then(() => {
-            const response = { ok: true, status: 202, data: `Place was deleted!` }
+            const response = { ok: true, status: 202, data: `Place was deleted!` };
             return resolve(response);
           });
       });
@@ -94,11 +125,11 @@ export default class StuffyGranny {
 
   subscriptions = {
     getMySubscriptions: (my_doc_id: string) => {
-      return new Promise((resolve, reject) => {
+      return new Promise<IDBUsers>((resolve, reject) => {
         this.DB.collection('users')
           .doc(my_doc_id)
           .collection('subscriptions')
-          .onSnapshot((snapshot => {
+          .onSnapshot(snapshot => {
             const changes = snapshot.docChanges();
             let data: any = [];
             changes.forEach(change => {
@@ -110,7 +141,27 @@ export default class StuffyGranny {
               }
             });
             return resolve({ ok: true, status: 200, data: data });
-          }))
+          });
+      });
+    },
+    getMySubscribers: (my_doc_id: string) => {
+      return new Promise<IDBUsers>((resolve, reject) => {
+        this.DB.collection('users')
+          .doc(my_doc_id)
+          .collection('followers')
+          .onSnapshot(snapshot => {
+            const changes = snapshot.docChanges();
+            let data: any = [];
+            changes.forEach(change => {
+              if (change.type === 'removed') {
+                const idToRemove = change.doc.data().user_id;
+                data = change.doc.data().filter(item => item.id !== idToRemove);
+              } else if (change.type === 'added') {
+                data.push({ ...change.doc.data(), doc_id: change.doc.id });
+              }
+            });
+            return resolve({ ok: true, status: 200, data: data });
+          });
       });
     },
     subscribe: (user_doc_id: string, me: any) => {
@@ -136,18 +187,18 @@ export default class StuffyGranny {
     unsubscribe: (user_doc_id: string, me: any, subscibeDocId: string, docToRemove: any) => {
       return new Promise((resolve, reject) => {
         docToRemove && this.DB.collection('users')
-            .doc(user_doc_id)
-            .collection('followers')
-            .doc(subscibeDocId)
-            .delete()
-            .then(() => {
-              this.DB.collection('users')
-                .doc(me._id)
-                .collection('subscriptions')
-                .doc(docToRemove[0].doc_id)
-                .delete();
-              return resolve({ ok: true, status: 204, data: 'Unsubscribed!' });
-            });
+          .doc(user_doc_id)
+          .collection('followers')
+          .doc(subscibeDocId)
+          .delete()
+          .then(() => {
+            this.DB.collection('users')
+              .doc(me._id)
+              .collection('subscriptions')
+              .doc(docToRemove[0].doc_id)
+              .delete();
+            return resolve({ ok: true, status: 204, data: 'Unsubscribed!' });
+          });
       });
     },
   };

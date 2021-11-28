@@ -1,5 +1,14 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { View, Text, StyleSheet, StatusBar, Image, ScrollView, Dimensions, TouchableOpacity } from 'react-native';
+import React, { useState, useCallback, useEffect, useLayoutEffect } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  StatusBar,
+  Image,
+  ScrollView,
+  Dimensions,
+  TouchableOpacity,
+} from 'react-native';
 
 import { DB } from '../../sglib.config';
 import { useSelector } from 'react-redux';
@@ -7,39 +16,119 @@ import { IRootState } from '../store/index';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import { NavigationButton } from '../components/NavigationButton';
 import { IDBPlaces } from '../interfaces/IDBPlaces';
+import { IDBUsers } from '../interfaces/IDBUsers';
 import { IPostData } from '../interfaces/IPostData';
+import { THEME } from '../theme';
+import { IUserProfile } from '../interfaces/INavigation';
 
-export const UserProfileScreen = ({ navigation }) => {
+interface IUserData {
+  _id: string;
+  about_user: string;
+  avatar_url: string;
+  first_name: string;
+  last_name: string;
+  location: {
+    city: string;
+    country: string;
+  };
+  user_id: string;
+  user_name: string;
+}
+
+export const UserProfileScreen: React.FC<IUserProfile> = ({ navigation, route }) => {
   const userData = useSelector((state: IRootState) => state.userDataReducer);
-  const [userPosts, setUserPosts] = useState<IPostData[]>([]);
+  const [posts, setPosts] = useState<IPostData[]>([]);
+  const [subscriptions, setSubscriptions] = useState<IUserData[]>([]);
+  const [subscribers, setSubscribers] = useState<IUserData[]>([]);
+  const [isUserProfile, setIsUserProfile] = useState<boolean | null>(null);
+  const [profileData, setProfileData] = useState<IUserData>();
 
-  const getUserPosts = useCallback(async () => {
-    console.log('call useCallback DB');
-    const result: IDBPlaces = await DB.places.getMyPlaces(userData._id);
-    if (result) {
-      setUserPosts(result.data);
+  const getUserData = useCallback(async () => {
+    if (isUserProfile === false && route.params?.params._id) {
+      console.log('user');
+      const result: IDBUsers = await DB.users.getUserData(route.params?.params._id);
+      if (result) {
+        setProfileData(result.data[0]);
+      }
     }
-    console.log('response', userPosts[0].doc_id);
-  }, []);
+  }, [isUserProfile, route.params?.params._id]);
+
+  const getPosts = useCallback(async () => {
+    console.log('useCallback DB posts 0');
+    if (profileData) {
+      console.log('useCallback DB posts 1');
+      const result: IDBPlaces = await DB.places.getMyPlaces(profileData._id);
+      if (result) {
+        setPosts(result.data);
+      }
+    }
+  }, [profileData]);
+
+  const getSubscriptions = useCallback(async () => {
+    console.log('useCallback DB getMySubscriptions 0');
+    if (profileData) {
+      console.log('useCallback DB getMySubscriptions 1');
+      const result = await DB.subscriptions.getMySubscriptions(profileData._id);
+      if (result) {
+        setSubscriptions(result.data);
+      }
+    }
+  }, [profileData]);
+
+  const getSubscribers = useCallback(async () => {
+    console.log('useCallback DB getMySubscribers 0');
+    if (profileData) {
+      console.log('useCallback DB getMySubscribers 1');
+      const result = await DB.subscriptions.getMySubscribers(profileData._id);
+      if (result) {
+        setSubscribers(result.data);
+      }
+    }
+  }, [profileData]);
 
   useEffect(() => {
-    getUserPosts();
-  }, [getUserPosts]);
+    console.log('USER IDENTIFICATION');
+    if (!route.params?.params._id || route.params?.params._id === userData._id) {
+      setIsUserProfile(true);
+      setProfileData(userData);
+    } else {
+      setIsUserProfile(false);
+    }
+  }, [route, userData]);
 
-  React.useLayoutEffect(() => {
+  useEffect(() => {
+    getUserData();
+  }, [getUserData]);
+
+  useEffect(() => {
+    getPosts();
+  }, [getPosts]);
+
+  useEffect(() => {
+    getSubscribers();
+  }, [getSubscribers]);
+
+  useEffect(() => {
+    getSubscriptions();
+  }, [getSubscriptions]);
+
+  useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: () => (
-        <HeaderButtons HeaderButtonComponent={NavigationButton}>
-          <Item
-            title="Show posts as List"
-            iconName="account-cog"
-            onPress={() => navigation.navigate('Settings')}
-          />
-        </HeaderButtons>
-      ),
+      headerRight: () =>
+        isUserProfile ? (
+          <HeaderButtons HeaderButtonComponent={NavigationButton}>
+            <Item
+              title="Show posts as List"
+              iconName="account-cog"
+              onPress={() => navigation.navigate('Settings')}
+            />
+          </HeaderButtons>
+        ) : (
+          <></>
+        ),
       headerTitle: userData.user_name,
     });
-  }, [navigation, userData.user_name]);
+  }, [isUserProfile, navigation, route.params?.params._id, userData._id, userData.user_name]);
 
   return (
     <ScrollView style={styles.screenWrapper}>
@@ -62,27 +151,28 @@ export const UserProfileScreen = ({ navigation }) => {
             />
           </View>
           <View>
-            <Text style={styles.textInfoBold}>{userPosts.length}</Text>
+            <Text style={styles.textInfoBold}>{posts.length}</Text>
             <Text style={styles.textInfo}>Posts</Text>
           </View>
           <View>
-            <Text style={styles.textInfoBold}>0</Text>
+            <Text style={styles.textInfoBold}>{subscriptions.length}</Text>
             <Text style={styles.textInfo}>Subscription</Text>
           </View>
           <View>
-            <Text style={styles.textInfoBold}>0</Text>
+            <Text style={styles.textInfoBold}>{subscribers.length}</Text>
             <Text style={styles.textInfo}>Subscribers</Text>
           </View>
         </View>
-        <View style={{ marginTop: 15, }}>
+        <View style={styles.userInfoInnerContainer}>
           <Text style={styles.textUserName}>{`${userData.first_name} ${userData.last_name}`}</Text>
           <Text style={styles.textAboutUser}>{userData.about_user}</Text>
         </View>
       </View>
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', marginTop: 15, marginBottom: 85, alignContent: 'flex-start' }}>
-        {userPosts.map(place => (
+      <View style={styles.postsContainer}>
+        {posts.map(place => (
           <TouchableOpacity
-            style={styles.p}
+            activeOpacity={0.8}
+            style={styles.postsItem}
             key={place.doc_id}
             onPress={async () => {
               navigation.navigate('PlaceDetail', {
@@ -108,7 +198,7 @@ export const UserProfileScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   screenWrapper: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: THEME.WHITE_COLOR,
   },
   contentContainer: {
     marginTop: 15,
@@ -125,32 +215,38 @@ const styles = StyleSheet.create({
     height: 100,
     overflow: 'hidden',
   },
-  textInfoContainer: {
-  },
   textInfoBold: {
-    color: '#000000',
+    color: THEME.BLACK_COLOR,
     textAlign: 'center',
     fontWeight: 'bold',
   },
   textInfo: {
-    color: '#000000',
+    color: THEME.BLACK_COLOR,
     fontWeight: 'bold',
   },
   textUserName: {
-    color: '#000000',
+    color: THEME.BLACK_COLOR,
     fontWeight: 'bold',
     fontSize: 16,
     lineHeight: 24,
   },
+  userInfoInnerContainer: {
+    marginTop: 15,
+  },
   textAboutUser: {
-    color: '#000000',
+    color: THEME.BLACK_COLOR,
     fontSize: 16,
     lineHeight: 24,
   },
-  p: {
-    borderColor: '#ffffff',
-    borderWidth: 1,
+  postsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-start',
+    marginTop: 15,
+    marginBottom: 85,
+    alignContent: 'flex-start',
   },
-
-
+  postsItem: {
+    marginHorizontal: 1,
+  },
 });
