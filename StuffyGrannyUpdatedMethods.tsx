@@ -1,6 +1,7 @@
 import { IPostData } from './src/interfaces/IPostData';
 import { IDBPlaces } from './src/interfaces/IDBPlaces';
 import { IDBUsers } from './src/interfaces/IDBUsers';
+import { IDBSubscribers } from './src/interfaces/IDBSubscribers';
 
 interface IUser {
   [key: string]: string;
@@ -22,6 +23,10 @@ interface IUserData {
   };
   user_id: string;
   user_name: string;
+}
+
+interface ISubscribeUserDate extends IUserData {
+  doc_id: string;
 }
 
 export default class StuffyGranny {
@@ -125,7 +130,7 @@ export default class StuffyGranny {
 
   subscriptions = {
     getMySubscriptions: (my_doc_id: string) => {
-      return new Promise<IDBUsers>((resolve, reject) => {
+      return new Promise<IDBSubscribers>((resolve, reject) => {
         this.DB.collection('users')
           .doc(my_doc_id)
           .collection('subscriptions')
@@ -145,7 +150,7 @@ export default class StuffyGranny {
       });
     },
     getMySubscribers: (my_doc_id: string) => {
-      return new Promise<IDBUsers>((resolve, reject) => {
+      return new Promise<IDBSubscribers>((resolve, reject) => {
         this.DB.collection('users')
           .doc(my_doc_id)
           .collection('followers')
@@ -184,9 +189,9 @@ export default class StuffyGranny {
           });
       });
     },
-    unsubscribe: (user_doc_id: string, me: any, subscibeDocId: string, docToRemove: any) => {
+    unsubscribe: (user_doc_id: string, me: any, subscibeDocId: string, unsubscribeUserId: string, ) => {
       return new Promise((resolve, reject) => {
-        docToRemove && this.DB.collection('users')
+        this.DB.collection('users')
           .doc(user_doc_id)
           .collection('followers')
           .doc(subscibeDocId)
@@ -195,9 +200,22 @@ export default class StuffyGranny {
             this.DB.collection('users')
               .doc(me._id)
               .collection('subscriptions')
-              .doc(docToRemove[0].doc_id)
-              .delete();
-            return resolve({ ok: true, status: 204, data: 'Unsubscribed!' });
+              .where('user_id', '==', unsubscribeUserId)
+              .get()
+              .then((response: any) => {
+                const data: any[] = [];
+                response.forEach((doc: any) => {
+                  data.push({ ...doc.data(), doc_id: doc.id });
+                })
+                  .then(() => {
+                    this.DB.collection('users')
+                      .doc(me._id)
+                      .collection('subscriptions')
+                      .doc(data[0].doc_id)
+                      .delete();
+                    return resolve({ ok: true, status: 204, data: 'Unsubscribed!' });
+                  });
+              });
           });
       });
     },

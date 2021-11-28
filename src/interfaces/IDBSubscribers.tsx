@@ -12,11 +12,12 @@ export interface IUserData {
   user_name: string;
 }
 
-export interface IDBUsers {
-  ok: boolean;
-  status: number;
-  data: IUserData[];
+interface ISubscribeUserDate extends IUserData {
+  doc_id: string;
 }
 
-
-
+export interface IDSubscribers {
+  ok: boolean;
+  status: number;
+  data: ISubscribeUserDate[];
+}

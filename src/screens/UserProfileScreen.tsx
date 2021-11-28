@@ -20,6 +20,9 @@ import { IDBUsers } from '../interfaces/IDBUsers';
 import { IPostData } from '../interfaces/IPostData';
 import { THEME } from '../theme';
 import { IUserProfile } from '../interfaces/INavigation';
+import { CustomButton } from '../components/CustomButton';
+import { ICustomButtonStyle } from '../interfaces/ICustomButtonStyle';
+import { useTranslation } from 'react-i18next';
 
 interface IUserData {
   _id: string;
@@ -35,13 +38,21 @@ interface IUserData {
   user_name: string;
 }
 
+interface ISubscribeUserDate extends IUserData {
+  doc_id: string;
+}
+
 export const UserProfileScreen: React.FC<IUserProfile> = ({ navigation, route }) => {
   const userData = useSelector((state: IRootState) => state.userDataReducer);
   const [posts, setPosts] = useState<IPostData[]>([]);
-  const [subscriptions, setSubscriptions] = useState<IUserData[]>([]);
-  const [subscribers, setSubscribers] = useState<IUserData[]>([]);
+  const [subscriptions, setSubscriptions] = useState<ISubscribeUserDate[]>([]);
+  const [subscribers, setSubscribers] = useState<ISubscribeUserDate[]>([]);
   const [isUserProfile, setIsUserProfile] = useState<boolean | null>(null);
+  const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
   const [profileData, setProfileData] = useState<IUserData>();
+  const [unsubscribeDocId, setUnsubscribeDocId] = useState<string>('');
+
+  const { t } = useTranslation();
 
   const getUserData = useCallback(async () => {
     if (isUserProfile === false && route.params?.params._id) {
@@ -56,7 +67,6 @@ export const UserProfileScreen: React.FC<IUserProfile> = ({ navigation, route })
   const getPosts = useCallback(async () => {
     console.log('useCallback DB posts 0');
     if (profileData) {
-      console.log('useCallback DB posts 1');
       const result: IDBPlaces = await DB.places.getMyPlaces(profileData._id);
       if (result) {
         setPosts(result.data);
@@ -67,7 +77,6 @@ export const UserProfileScreen: React.FC<IUserProfile> = ({ navigation, route })
   const getSubscriptions = useCallback(async () => {
     console.log('useCallback DB getMySubscriptions 0');
     if (profileData) {
-      console.log('useCallback DB getMySubscriptions 1');
       const result = await DB.subscriptions.getMySubscriptions(profileData._id);
       if (result) {
         setSubscriptions(result.data);
@@ -78,7 +87,6 @@ export const UserProfileScreen: React.FC<IUserProfile> = ({ navigation, route })
   const getSubscribers = useCallback(async () => {
     console.log('useCallback DB getMySubscribers 0');
     if (profileData) {
-      console.log('useCallback DB getMySubscribers 1');
       const result = await DB.subscriptions.getMySubscribers(profileData._id);
       if (result) {
         setSubscribers(result.data);
@@ -112,6 +120,16 @@ export const UserProfileScreen: React.FC<IUserProfile> = ({ navigation, route })
     getSubscriptions();
   }, [getSubscriptions]);
 
+  useEffect(() => {
+    const result = subscribers.find(el => el._id === userData._id);
+    console.log('SUBSCRIBER', result);
+    if (result) {
+      console.log('DOC', result.doc_id);
+      setIsSubscribed(true);
+      setUnsubscribeDocId(result.doc_id);
+    }
+  }, [getUserData, subscribers, userData._id]);
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () =>
@@ -126,9 +144,53 @@ export const UserProfileScreen: React.FC<IUserProfile> = ({ navigation, route })
         ) : (
           <></>
         ),
-      headerTitle: userData.user_name,
+      headerTitle: profileData?.user_name,
     });
-  }, [isUserProfile, navigation, route.params?.params._id, userData._id, userData.user_name]);
+  }, [isUserProfile, navigation, profileData?.user_name]);
+
+  const SubscriptionComponent = () => {
+    console.log('sub', subscribers);
+    const subscribe = () => {
+      if (route.params?.params._id) {
+        DB.subscriptions.subscribe(route.params?.params._id, userData);
+      }
+    };
+
+    const unsubscribe = () => {
+      if (route.params?.params._id && profileData) {
+        DB.subscriptions.unsubscribe(
+          route.params?.params._id,
+          userData._id,
+          unsubscribeDocId,
+          profileData.user_id,
+        );
+      }
+    };
+
+    return (
+      <View style={styles.subscriptionContainer}>
+        {!isSubscribed ? (
+          <View style={signInButtonStyle.buttonContainerStyle}>
+            <CustomButton
+              buttonStyle={signInButtonStyle.buttonStyle}
+              buttonTextStyle={signInButtonStyle.buttonTextStyle}
+              buttonText={t('profileScreen.subscribe')}
+              onPressHandler={subscribe}
+            />
+          </View>
+        ) : (
+          <View style={signInButtonStyle.buttonContainerStyle}>
+            <CustomButton
+              buttonStyle={signInButtonStyle.buttonStyle}
+              buttonTextStyle={signInButtonStyle.buttonTextStyle}
+              buttonText={t('profileScreen.unsubscribe')}
+              onPressHandler={unsubscribe}
+            />
+          </View>
+        )}
+      </View>
+    );
+  };
 
   return (
     <ScrollView style={styles.screenWrapper}>
@@ -146,21 +208,26 @@ export const UserProfileScreen: React.FC<IUserProfile> = ({ navigation, route })
               source={{
                 width: 100,
                 height: 100,
-                uri: userData.avatar_url,
+                uri: profileData?.avatar_url,
               }}
             />
           </View>
-          <View>
-            <Text style={styles.textInfoBold}>{posts.length}</Text>
-            <Text style={styles.textInfo}>Posts</Text>
-          </View>
-          <View>
-            <Text style={styles.textInfoBold}>{subscriptions.length}</Text>
-            <Text style={styles.textInfo}>Subscription</Text>
-          </View>
-          <View>
-            <Text style={styles.textInfoBold}>{subscribers.length}</Text>
-            <Text style={styles.textInfo}>Subscribers</Text>
+          <View style={styles.userInfoInner}>
+            <View style={styles.userInfoBlock}>
+              <View>
+                <Text style={styles.textInfoBold}>{posts.length}</Text>
+                <Text style={styles.textInfo}>{t('profileScreen.posts')}</Text>
+              </View>
+              <View>
+                <Text style={styles.textInfoBold}>{subscriptions.length}</Text>
+                <Text style={styles.textInfo}>{t('profileScreen.subscriptions')}</Text>
+              </View>
+              <View>
+                <Text style={styles.textInfoBold}>{subscribers.length}</Text>
+                <Text style={styles.textInfo}>{t('profileScreen.subscribers')}</Text>
+              </View>
+            </View>
+            {isUserProfile ? SubscriptionComponent() : <></>}
           </View>
         </View>
         <View style={styles.userInfoInnerContainer}>
@@ -206,8 +273,16 @@ const styles = StyleSheet.create({
   },
   userInfoContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
+  },
+  userInfoInner: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  userInfoBlock: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginLeft: 20,
   },
   avatarContainer: {
     borderRadius: 80,
@@ -248,5 +323,25 @@ const styles = StyleSheet.create({
   },
   postsItem: {
     marginHorizontal: 1,
+  },
+  subscriptionContainer: {
+    flexDirection: 'row',
+    marginLeft: 20,
+  },
+});
+
+const signInButtonStyle = StyleSheet.create<ICustomButtonStyle>({
+  buttonContainerStyle: {
+    width: 120,
+
+    marginTop: 20,
+  },
+  buttonStyle: {
+    paddingVertical: 2,
+    paddingHorizontal: 10,
+    backgroundColor: THEME.MAIN_COLOR,
+  },
+  buttonTextStyle: {
+    color: THEME.WHITE_COLOR,
   },
 });
