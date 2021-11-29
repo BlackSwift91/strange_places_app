@@ -1,6 +1,6 @@
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
-import { NavigatorScreenParams } from '@react-navigation/native';
+// import { NavigatorScreenParams } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 
 import { IPostData } from '../interfaces/IPostData';
@@ -23,8 +23,7 @@ type NavigatorParamsList = {
 type HomeNavigatorParamsList = {
   HomeScreen: undefined;
   PlaceDetail: { params: { post: IPostData } };
-  SignUpScreen: undefined;
-  TextInputModalScreen: { textValue: string; textLabel: string; placeholder: string };
+  UserProfile: { params: { _id: string } };
 };
 
 type TabNavigatorParamsList = {
@@ -34,13 +33,13 @@ type TabNavigatorParamsList = {
   // ProfileNavigator: { screen: string; params: { post: IPostData } };
 };
 
-type ProfileParamsList = {
-  AboutScreen: { word: string; definition: string };
-};
+// type ProfileParamsList = {
+//   AboutScreen: { word: string; definition: string };
+// };
 
-type RootNavigatorParamsList = {
-  AboutScreen: NavigatorScreenParams<ProfileParamsList>;
-};
+// type RootNavigatorParamsList = {
+//   AboutScreen: NavigatorScreenParams<ProfileParamsList>;
+// };
 
 export interface StartScreenProps {
   navigation: StackNavigationProp<NavigatorParamsList, 'StartScreen'>;
@@ -76,6 +75,11 @@ export interface IAddNewPlaceScreen {
 export interface IHomeScreen {
   navigation: StackNavigationProp<HomeNavigatorParamsList, 'HomeScreen'>;
   route: RouteProp<HomeNavigatorParamsList, 'HomeScreen'>;
+}
+
+export interface IPlaceScreen {
+  navigation: StackNavigationProp<HomeNavigatorParamsList, 'PlaceDetail'>;
+  route: RouteProp<HomeNavigatorParamsList, 'PlaceDetail'>;
 }
 
 // export interface IHomeScreen {

@@ -9,4 +9,3 @@ export interface IPostData {
   user_id: string;
   doc_id: string;
 }
-

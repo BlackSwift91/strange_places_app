@@ -39,7 +39,6 @@ export const HomeScreen: React.FC<IHomeScreen> = ({ navigation }) => {
   const mapRef = useRef<any>();
 
   const animateMap = useCallback(() => {
-    console.log('call useCallback');
     if (mapRef.current) {
       mapRef.current?.animateToRegion(
         {
@@ -92,13 +91,21 @@ export const HomeScreen: React.FC<IHomeScreen> = ({ navigation }) => {
     console.log('call useCallback DB');
     const result: IDBPlaces = await DB.places.getAllPlaces();
     if (result) {
-      console.log(userData.user_id);
-      console.log(result.data[0].user_id);
       setAllPlaces(result.data);
       setUserPlaces(result.data.filter(item => item.user_id === userData.user_id));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [userData]);
+
+  useEffect(() => {
+    getData();
+  }, [getData, userData]);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      getData();
+    });
+    return unsubscribe;
+  }, [navigation, getData]);
 
   useEffect(() => {
     if (isAllPlaces) {
@@ -106,11 +113,7 @@ export const HomeScreen: React.FC<IHomeScreen> = ({ navigation }) => {
     } else {
       setPlaces(userPlaces);
     }
-  }, [allPlaces, isAllPlaces, userPlaces]);
-
-  useEffect(() => {
-    getData();
-  }, [userData, getData, navigation]);
+  }, [allPlaces, isAllPlaces, userPlaces, places]);
 
   if (isMapView) {
     return (
