@@ -45,7 +45,7 @@ export default class StuffyGranny {
             response.forEach((doc: any) => {
               data.push({ ...doc.data(), _id: doc.id });
             });
-
+            console.log('data fetched');  
             return resolve({ ok: true, status: 200, data: data });
           });
       });
@@ -69,6 +69,7 @@ export default class StuffyGranny {
 
   places = {
     deletePlace: (item_doc_id: string, my_doc_id: string) => {
+      console.log('delete place');
       return new Promise((resolve, reject) => {
         this.DB.collection('users')
           .doc(my_doc_id)
@@ -108,6 +109,7 @@ export default class StuffyGranny {
                 data.push({ ...change.doc.data(), doc_id: change.doc.id });
               }
             });
+            console.log('data fetched');
             return resolve({ ok: true, status: 200, data: data });
           }))
       });
@@ -122,6 +124,7 @@ export default class StuffyGranny {
             response.forEach((doc: any) => {
               data.push({ ...doc.data(), doc_id: doc.id });
             });
+            console.log('data fetched');
             return resolve({ ok: true, status: 200, data: data });
           });
       });
