@@ -17,6 +17,3 @@ export interface IDBUsers {
   status: number;
   data: IUserData[];
 }
-
-
-

@@ -11,3 +11,7 @@ export interface IUserData {
   user_id: string;
   user_name: string;
 }
+
+export interface ISubscribeUserDate extends IUserData {
+  doc_id: string;
+}
