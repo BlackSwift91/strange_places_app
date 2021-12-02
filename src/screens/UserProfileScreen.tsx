@@ -11,7 +11,6 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
-// import firestore from '@react-native-firebase/firestore';
 import { DB } from '../../sglib.config';
 import { useSelector } from 'react-redux';
 import { IRootState } from '../store/index';
@@ -197,19 +196,19 @@ export const UserProfileScreen: React.FC<IUserProfile> = ({ navigation, route })
     return (
       <View style={styles.subscriptionContainer}>
         {!isSubscribed ? (
-          <View style={signInButtonStyle.buttonContainerStyle}>
+          <View style={subscribeButtonStyle.buttonContainerStyle}>
             <CustomButton
-              buttonStyle={signInButtonStyle.buttonStyle}
-              buttonTextStyle={signInButtonStyle.buttonTextStyle}
+              buttonStyle={subscribeButtonStyle.buttonStyle}
+              buttonTextStyle={subscribeButtonStyle.buttonTextStyle}
               buttonText={t('profileScreen.subscribe')}
               onPressHandler={subscribe}
             />
           </View>
         ) : (
-          <View style={signInButtonStyle.buttonContainerStyle}>
+          <View style={subscribeButtonStyle.buttonContainerStyle}>
             <CustomButton
-              buttonStyle={signInButtonStyle.buttonStyle}
-              buttonTextStyle={signInButtonStyle.buttonTextStyle}
+              buttonStyle={subscribeButtonStyle.buttonStyle}
+              buttonTextStyle={subscribeButtonStyle.buttonTextStyle}
               buttonText={t('profileScreen.unsubscribe')}
               onPressHandler={unsubscribe}
             />
@@ -380,7 +379,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const signInButtonStyle = StyleSheet.create<ICustomButtonStyle>({
+const subscribeButtonStyle = StyleSheet.create<ICustomButtonStyle>({
   buttonContainerStyle: {
     width: 120,
 
