@@ -60,5 +60,12 @@
   "homeNavigator": {
     "homeScreen": "Home",
     "placeDetailScreen": "Place Details"
+  },
+  "profileScreen": {
+    "posts": "Posts",
+    "subscriptions": "Subscriptions",
+    "subscribers": "Subscribers",
+    "subscribe": "subscribe",
+    "unsubscribe": "unsubscribe"
   }
 }

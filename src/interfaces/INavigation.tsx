@@ -33,9 +33,15 @@ type TabNavigatorParamsList = {
   // ProfileNavigator: { screen: string; params: { post: IPostData } };
 };
 
-// type ProfileParamsList = {
-//   AboutScreen: { word: string; definition: string };
-// };
+type ProfileNavigatorParamsList = {
+  UserProfile: { params: { _id: string } } | undefined;
+  Settings: undefined;
+  PlaceDetail: { params: { post: IPostData } };
+};
+
+type ProfileParamsList = {
+  AboutScreen: { word: string; definition: string };
+};
 
 // type RootNavigatorParamsList = {
 //   AboutScreen: NavigatorScreenParams<ProfileParamsList>;
@@ -77,6 +83,10 @@ export interface IHomeScreen {
   route: RouteProp<HomeNavigatorParamsList, 'HomeScreen'>;
 }
 
+export interface IUserProfile {
+  navigation: StackNavigationProp<ProfileNavigatorParamsList, 'UserProfile'>;
+  route: RouteProp<ProfileNavigatorParamsList, 'UserProfile'>;
+}
 export interface IPlaceScreen {
   navigation: StackNavigationProp<HomeNavigatorParamsList, 'PlaceDetail'>;
   route: RouteProp<HomeNavigatorParamsList, 'PlaceDetail'>;
