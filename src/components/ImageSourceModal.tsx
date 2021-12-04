@@ -1,6 +1,13 @@
 import React from 'react';
 
-import { Modal, View, TouchableOpacity, Text, TouchableWithoutFeedback, StyleSheet } from 'react-native';
+import {
+  Modal,
+  View,
+  TouchableOpacity,
+  Text,
+  TouchableWithoutFeedback,
+  StyleSheet,
+} from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { THEME } from '../theme';
