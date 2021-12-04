@@ -1,3 +1,5 @@
+import { NativeModules, Platform } from 'react-native';
+
 import {
   SET_UNIQUE_USER_ID,
   SET_ALL_USER_DATA,
@@ -5,10 +7,9 @@ import {
   SET_USER_LOCATION,
   SET_IS_USER_POSITION_LOCATED,
   SET_MAP_DELTA,
+  SET_LANGUAGE,
 } from '../types';
-import { UserActions, LoginActions, LocationActions } from '../actions/actions';
-// import { ILoginState } from '../../interfaces/ILoginState';
-// import { IUserData } from '../../interfaces/IUserData';
+import { UserActions, LoginActions, LocationActions, LanguageActions } from '../actions/actions';
 
 export interface IUserData {
   _id: string;
@@ -36,6 +37,10 @@ export interface IAuthData {
   isNewUser: boolean;
 }
 
+export interface ILanguage {
+  language: string;
+}
+
 const initialUserState: IUserData = {
   _id: '',
   about_user: '',
@@ -50,6 +55,12 @@ const initialUserState: IUserData = {
   user_name: '',
 };
 
+// const deviceLanguage =
+//   Platform.OS === 'ios'
+//     ? NativeModules.SettingsManager.settings.AppleLocale ||
+//     NativeModules.SettingsManager.settings.AppleLanguages[0] // iOS 13
+//     : NativeModules.I18nManager.localeIdentifier;
+
 const initialUserLocation: IUserLocation = {
   latitude: 0,
   longitude: 0,
@@ -60,6 +71,22 @@ const initialUserLocation: IUserLocation = {
 
 const initialAuthState: IAuthData = {
   isNewUser: false,
+};
+
+const initialLanguage: ILanguage = {
+  language: NativeModules.I18nManager.localeIdentifier,
+};
+
+export const userLanguageReducer = (state = initialLanguage, action: LanguageActions) => {
+  console.log(action.type);
+  switch (action.type) {
+    case SET_LANGUAGE:
+      console.log('LANGUAGEREDUCER', action.payload);
+      return { language: action.payload };
+    default:
+      state;
+  }
+  return state;
 };
 
 export const userDataReducer = (state = initialUserState, action: UserActions): IUserData => {

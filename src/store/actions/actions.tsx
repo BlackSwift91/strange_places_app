@@ -44,6 +44,8 @@ export type LoginActions =
   | { type: 'IS_NEW_USER'; payload: boolean }
   | { type: 'TEST'; payload: string };
 
+export type LanguageActions = { type: 'SET_LANGUAGE'; payload: string };
+
 export function setAllUserData(
   user_id: string,
   _id: string,
@@ -69,6 +71,13 @@ export function setAllUserData(
       user_id,
       user_name,
     },
+  };
+}
+
+export function setLanguage(language: string): LanguageActions {
+  return {
+    type: 'SET_LANGUAGE',
+    payload: language,
   };
 }
 

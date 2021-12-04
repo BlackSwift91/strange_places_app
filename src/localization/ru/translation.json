@@ -1,8 +1,8 @@
 {
   "_comment": "src/localization/en/translation.json",
   "startScreen": {
-    "appGreeting": "Добро пожаловать в Strange Places",
-    "appDescription": "Путешествуй, открывай и делись невероятными местами вокруг тебя!",
+    "appGreeting": "Welcome to Strange Places",
+    "appDescription": "Travel, discover and share amazing places around you",
     "signInButton": "Sign In",
     "signUpButton": "Sign Up",
     "restorePasswordButton": "Restore password"
@@ -44,5 +44,28 @@
     "userAboutInfo": "About Info",
     "userLocation": "Your location",
     "confirmButton": "Confirm"
+  },
+  "addNewPostScreen": {
+    "postTitleLabel": "Add Title",
+    "postTitlePlaceholder": "Add your post title",
+    "postDescriptionLabel": "Add description",
+    "postDescriptionPlaceholder": "Add description",
+    "postLocation": "Add Location",
+    "submitButton": "Add Post"
+  },
+  "tabNavigator": {
+    "homeButton": "Главная",
+    "profileButton": "Профиль"
+  },
+  "homeNavigator": {
+    "homeScreen": "Главная",
+    "placeDetailScreen": "Place Details"
+  },
+  "profileScreen": {
+    "posts": "Posts",
+    "subscriptions": "Subscriptions",
+    "subscribers": "Subscribers",
+    "subscribe": "subscribe",
+    "unsubscribe": "unsubscribe"
   }
 }
