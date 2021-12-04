@@ -1,4 +1,4 @@
-import { NativeModules, Platform } from 'react-native';
+import { NativeModules } from 'react-native';
 
 import {
   SET_UNIQUE_USER_ID,
@@ -8,8 +8,9 @@ import {
   SET_IS_USER_POSITION_LOCATED,
   SET_MAP_DELTA,
   SET_LANGUAGE,
+  SET_NOTIFICATIONS,
 } from '../types';
-import { UserActions, LoginActions, LocationActions, LanguageActions } from '../actions/actions';
+import { UserActions, LoginActions, LocationActions, SettingsActions } from '../actions/actions';
 
 export interface IUserData {
   _id: string;
@@ -37,8 +38,9 @@ export interface IAuthData {
   isNewUser: boolean;
 }
 
-export interface ILanguage {
+export interface ISettings {
   language: string;
+  notifications: boolean;
 }
 
 const initialUserState: IUserData = {
@@ -55,12 +57,6 @@ const initialUserState: IUserData = {
   user_name: '',
 };
 
-// const deviceLanguage =
-//   Platform.OS === 'ios'
-//     ? NativeModules.SettingsManager.settings.AppleLocale ||
-//     NativeModules.SettingsManager.settings.AppleLanguages[0] // iOS 13
-//     : NativeModules.I18nManager.localeIdentifier;
-
 const initialUserLocation: IUserLocation = {
   latitude: 0,
   longitude: 0,
@@ -73,16 +69,20 @@ const initialAuthState: IAuthData = {
   isNewUser: false,
 };
 
-const initialLanguage: ILanguage = {
+const initialSettings: ISettings = {
   language: NativeModules.I18nManager.localeIdentifier,
+  notifications: false,
 };
 
-export const userLanguageReducer = (state = initialLanguage, action: LanguageActions) => {
+export const userSettingsReducer = (state = initialSettings, action: SettingsActions) => {
   console.log(action.type);
   switch (action.type) {
     case SET_LANGUAGE:
       console.log('LANGUAGEREDUCER', action.payload);
-      return { language: action.payload };
+      return { ...state, language: action.payload };
+    case SET_NOTIFICATIONS:
+      console.log('NOTIFICATIONREDUCER', action.payload);
+      return { ...state, notifications: action.payload };
     default:
       state;
   }

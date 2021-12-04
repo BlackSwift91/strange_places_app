@@ -3,22 +3,22 @@ import {
   userDataReducer,
   authDataReducer,
   userLocationReducer,
-  userLanguageReducer,
+  userSettingsReducer,
 } from './reducers/reducers';
-import { IUserData, IUserLocation, IAuthData, ILanguage } from './reducers/reducers';
+import { IUserData, IUserLocation, IAuthData, ISettings } from './reducers/reducers';
 
 export interface IRootState {
   userDataReducer: IUserData;
   authDataReducer: IAuthData;
   userLocationReducer: IUserLocation;
-  userLanguageReducer: ILanguage;
+  userSettingsReducer: ISettings;
 }
 
 const rootReducer = combineReducers({
   userDataReducer,
   authDataReducer,
   userLocationReducer,
-  userLanguageReducer,
+  userSettingsReducer,
 });
 
 export const store = createStore(rootReducer);

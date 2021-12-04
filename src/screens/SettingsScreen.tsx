@@ -1,38 +1,42 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, StatusBar, Switch } from 'react-native';
-import { THEME } from '../theme';
+import auth from '@react-native-firebase/auth';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Picker } from '@react-native-picker/picker';
-import { CustomButton } from '../components/CustomButton';
 import { useTranslation } from 'react-i18next';
-import { setLanguage } from '../store/actions/actions';
-import i18n from '../localization/i18n';
-import { IRootState } from '../store/index';
-
-import auth from '@react-native-firebase/auth';
-
 import { useDispatch, useSelector } from 'react-redux';
-import { NavigationRouteContext } from '@react-navigation/core';
+import { View, StyleSheet, StatusBar, Switch } from 'react-native';
 
-export const SettingsScreen = ({ navigation }) => {
-  const userLanguage = useSelector((state: IRootState) => state.userLanguageReducer.language);
-  const [selectedLanguage, setSelectedLanguage] = useState(userLanguage);
-  const [isEnabled, setIsEnabled] = useState(false);
-  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+import i18n from '../localization/i18n';
+import { THEME } from '../theme';
+import { IRootState } from '../store/index';
+import { setLanguage, setNotifications } from '../store/actions/actions';
+import { CustomButton } from '../components/CustomButton';
+import { ISettingsScreen } from '../interfaces/INavigation';
+
+export const SettingsScreen: React.FC<ISettingsScreen> = ({ navigation }) => {
+  const userLanguage = useSelector((state: IRootState) => state.userSettingsReducer.language);
+  const notifications = useSelector((state: IRootState) => state.userSettingsReducer.notifications);
+  const [selectedLanguage, setSelectedLanguage] = useState<string>(userLanguage);
+  const [userNotifications, setUserNotifications] = useState<boolean>(notifications);
+
   const dispatch = useDispatch();
-
-  const pickerRef = useRef();
+  const pickerRef = useRef<Picker<string>>(null);
+  const { t } = useTranslation();
 
   function open() {
-    pickerRef.current.focus();
+    pickerRef.current?.focus();
   }
+
+  const toggleSwitch = () => setUserNotifications(previousState => !previousState);
 
   useEffect(() => {
     dispatch(setLanguage(selectedLanguage));
     i18n.changeLanguage(selectedLanguage);
   }, [dispatch, selectedLanguage, userLanguage]);
 
-  console.log('SUR', selectedLanguage);
+  useEffect(() => {
+    dispatch(setNotifications(userNotifications));
+  }, [dispatch, userLanguage, userNotifications]);
 
   const changePassword = () => {
     navigation.navigate('ChangePassword');
@@ -43,7 +47,7 @@ export const SettingsScreen = ({ navigation }) => {
   };
 
   const enableNotifications = () => {
-    setIsEnabled(previousState => !previousState);
+    setUserNotifications(previousState => !previousState);
   };
 
   const signOut = () => {
@@ -61,41 +65,41 @@ export const SettingsScreen = ({ navigation }) => {
         hidden={false}
         barStyle="dark-content"
       />
-      <View style={{ flexDirection: 'row', marginHorizontal: 15, marginTop: 30, }}>
+      <View style={styles.changePasswordContainer}>
         <MaterialCommunityIcons name="lock-outline" color={THEME.MAIN_COLOR} size={24} />
-        <View style={restorePasswordButtonStyle.buttonContainerStyle}>
+        <View style={settingsButtonStyle.buttonContainerStyle}>
           <CustomButton
-            buttonStyle={restorePasswordButtonStyle.buttonStyle}
-            buttonTextStyle={restorePasswordButtonStyle.buttonTextStyle}
-            buttonText={'Change password'}
+            buttonStyle={settingsButtonStyle.buttonStyle}
+            buttonTextStyle={settingsButtonStyle.buttonTextStyle}
+            buttonText={t('settingsScreen.changePassword')}
             onPressHandler={changePassword}
           />
         </View>
       </View>
-      <View style={{ flexDirection: 'row', marginHorizontal: 15, marginTop: 15, }}>
+      <View style={styles.changeProfileDataContainer}>
         <MaterialCommunityIcons name="account-circle-outline" color={THEME.MAIN_COLOR} size={24} />
-        <View style={restorePasswordButtonStyle.buttonContainerStyle}>
+        <View style={settingsButtonStyle.buttonContainerStyle}>
           <CustomButton
-            buttonStyle={restorePasswordButtonStyle.buttonStyle}
-            buttonTextStyle={restorePasswordButtonStyle.buttonTextStyle}
-            buttonText={'Change profile data'}
+            buttonStyle={settingsButtonStyle.buttonStyle}
+            buttonTextStyle={settingsButtonStyle.buttonTextStyle}
+            buttonText={t('settingsScreen.changeProfileData')}
             onPressHandler={changeProfileData}
           />
         </View>
       </View>
 
-      <View style={{ flexDirection: 'row', marginHorizontal: 15, marginTop: 15, }}>
+      <View style={styles.changeLanguageContainer}>
         <MaterialCommunityIcons name="translate" color={THEME.MAIN_COLOR} size={24} />
-        <View style={restorePasswordButtonStyle.buttonContainerStyle}>
+        <View style={settingsButtonStyle.buttonContainerStyle}>
           <CustomButton
-            buttonStyle={restorePasswordButtonStyle.buttonStyle}
-            buttonTextStyle={restorePasswordButtonStyle.buttonTextStyle}
-            buttonText={'Change language'}
+            buttonStyle={settingsButtonStyle.buttonStyle}
+            buttonTextStyle={settingsButtonStyle.buttonTextStyle}
+            buttonText={t('settingsScreen.changeLanguage')}
             onPressHandler={open}
           />
           <Picker
             ref={pickerRef}
-            style={{ color: THEME.MAIN_COLOR, }}
+            style={styles.pickerStyle}
             dropdownIconColor={THEME.MAIN_COLOR}
             selectedValue={selectedLanguage}
             onValueChange={itemValue => setSelectedLanguage(itemValue)}>
@@ -105,33 +109,32 @@ export const SettingsScreen = ({ navigation }) => {
         </View>
       </View>
 
-      <View style={{ flexDirection: 'row', marginHorizontal: 15, marginTop: 0 }}>
+      <View style={styles.enableNotificationsContainer}>
         <MaterialCommunityIcons name="bell-outline" color={THEME.MAIN_COLOR} size={24} />
-        <View style={restorePasswordButtonStyle.buttonContainerStyle}>
+        <View style={settingsButtonStyle.buttonContainerStyle}>
           <CustomButton
-            buttonStyle={restorePasswordButtonStyle.buttonStyle}
-            buttonTextStyle={restorePasswordButtonStyle.buttonTextStyle}
-            buttonText={'Enable notifications'}
+            buttonStyle={settingsButtonStyle.buttonStyle}
+            buttonTextStyle={settingsButtonStyle.buttonTextStyle}
+            buttonText={t('settingsScreen.enableNotifications')}
             onPressHandler={enableNotifications}
           />
         </View>
         <Switch
-          style={{ marginLeft: 10 }}
-          trackColor={{ false: "#767577", true: "#81b0ff" }}
-          thumbColor={isEnabled ? THEME.MAIN_COLOR : "#f4f3f4"}
-          ios_backgroundColor="#3e3e3e"
+          style={styles.switchStyle}
+          trackColor={{ false: THEME.DARK_GRAY_COLOR, true: THEME.DARK_GRAY_COLOR }}
+          thumbColor={userNotifications ? THEME.MAIN_COLOR : THEME.RED_COLOR}
           onValueChange={toggleSwitch}
-          value={isEnabled}
+          value={userNotifications}
         />
       </View>
 
-      <View style={{ flexDirection: 'row', marginHorizontal: 15, marginTop: 15, position: 'absolute', bottom: 80 }}>
+      <View style={styles.logOutContainer}>
         <MaterialCommunityIcons name="logout" color={THEME.MAIN_COLOR} size={24} />
-        <View style={restorePasswordButtonStyle.buttonContainerStyle}>
+        <View style={settingsButtonStyle.buttonContainerStyle}>
           <CustomButton
-            buttonStyle={restorePasswordButtonStyle.buttonStyle}
-            buttonTextStyle={restorePasswordButtonStyle.buttonTextStyle}
-            buttonText={'Logout'}
+            buttonStyle={settingsButtonStyle.buttonStyle}
+            buttonTextStyle={settingsButtonStyle.buttonTextStyle}
+            buttonText={t('settingsScreen.logOut')}
             onPressHandler={signOut}
           />
         </View>
@@ -148,9 +151,42 @@ const styles = StyleSheet.create({
   text: {
     color: 'black',
   },
+  changePasswordContainer: {
+    flexDirection: 'row',
+    marginHorizontal: 15,
+    marginTop: 30,
+  },
+  changeProfileDataContainer: {
+    flexDirection: 'row',
+    marginHorizontal: 15,
+    marginTop: 15,
+  },
+  changeLanguageContainer: {
+    flexDirection: 'row',
+    marginHorizontal: 15,
+    marginTop: 15,
+  },
+  enableNotificationsContainer: {
+    flexDirection: 'row',
+    marginHorizontal: 15,
+    marginTop: 0,
+  },
+  logOutContainer: {
+    flexDirection: 'row',
+    marginHorizontal: 15,
+    marginTop: 15,
+    position: 'absolute',
+    bottom: 80,
+  },
+  switchStyle: {
+    marginLeft: 10,
+  },
+  pickerStyle: {
+    color: THEME.MAIN_COLOR,
+  },
 });
 
-const restorePasswordButtonStyle = StyleSheet.create({
+const settingsButtonStyle = StyleSheet.create({
   buttonContainerStyle: {
     width: 160,
     textAlign: 'left',

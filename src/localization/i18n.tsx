@@ -7,7 +7,7 @@ import { initReactI18next } from 'react-i18next';
 import translationEN from './en/translation.json';
 import translationRU from './ru/translation.json';
 
-console.log('LNG', store.getState().userLanguageReducer.language);
+console.log('LNG', store.getState().userSettingsReducer.language);
 
 const resources = {
   en_US: {
@@ -30,6 +30,6 @@ i18n
     },
   });
 
-i18n.changeLanguage(store.getState().userLanguageReducer.language);
+i18n.changeLanguage(store.getState().userSettingsReducer.language);
 
 export default i18n;
