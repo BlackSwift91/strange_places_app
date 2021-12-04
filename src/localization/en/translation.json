@@ -67,5 +67,19 @@
     "subscribers": "Subscribers",
     "subscribe": "subscribe",
     "unsubscribe": "unsubscribe"
+  },
+  "changePasswordScreen": {
+    "changePassword": "Change Password",
+    "alertInputEmail": "Please input youl email",
+    "alertPasswordLength": "The password must be at least six symbols",
+    "alertInputEmailEqual": "Passwords must be equal",
+    "currentPasswordLabel": "Input current password",
+    "currentPasswordPlaceholder": "Current password",
+    "newPasswordLabel": "Input new password",
+    "newPasswordPlaceholder": "New password",
+    "repeatPasswordPlaceholder": "Repeat password",
+    "changePasswordButton": "Change password",
+    "wrongPassword": "Wrong password",
+    "changedPassword": "Password changed successfully"
   }
 }

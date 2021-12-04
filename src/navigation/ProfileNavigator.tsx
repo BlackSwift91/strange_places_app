@@ -48,6 +48,7 @@ export const ProfileNavigator = () => {
         name="ChangePassword"
         component={ChangePasswordScreen}
         options={{
+          headerTitle: t('changePasswordScreen.changePassword'),
           headerShown: true,
         }}
       />
