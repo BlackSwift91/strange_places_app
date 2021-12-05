@@ -20,6 +20,7 @@ const styles = StyleSheet.create({
     width: '90%',
   },
   text: {
+    fontSize: 15,
     color: THEME.RED_COLOR,
   },
 });
