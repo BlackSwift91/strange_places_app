@@ -104,6 +104,7 @@
     "changeProfileData": "Change profile data",
     "changeLanguage": "Change language",
     "enableNotifications": "Enable notifications",
-    "logOut": "Logout"
+    "logOut": "Logout",
+    "country": "Country"
   }
 }

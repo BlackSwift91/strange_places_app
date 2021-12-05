@@ -36,7 +36,6 @@ type ProfileNavigatorParamsList = {
   UserProfile: { params: { _id: string } } | undefined;
   Settings: undefined;
   PlaceDetail: { params: { post: IPostData } };
-
   AboutUserModalScreen: { textValue: string; textLabel: string; placeholder: string };
   ChangeLocationModalScreen: { city: string; country: string };
   ChangeProfile: {
@@ -116,7 +115,7 @@ export interface IChangeAboutUserInfoModal {
 export interface IChangeProfileScreen {
   navigation: StackNavigationProp<ProfileNavigatorParamsList, 'ChangeProfile'>;
   route: RouteProp<ProfileNavigatorParamsList, 'ChangeProfile'>;
-
+}
 export interface ISettingsScreen {
   navigation: StackNavigationProp<ProfileNavigatorParamsList, 'Settings'>;
 }
