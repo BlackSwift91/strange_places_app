@@ -67,5 +67,13 @@
     "subscribers": "Subscribers",
     "subscribe": "subscribe",
     "unsubscribe": "unsubscribe"
+  },
+  "settingsScreen": {
+    "settings": "Settings",
+    "changePassword": "Change password",
+    "changeProfileData": "Change profile data",
+    "changeLanguage": "Change language",
+    "enableNotifications": "Enable notifications",
+    "logOut": "Logout"
   }
 }

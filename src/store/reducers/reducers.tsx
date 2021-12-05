@@ -1,3 +1,5 @@
+import { NativeModules } from 'react-native';
+
 import {
   SET_UNIQUE_USER_ID,
   SET_ALL_USER_DATA,
@@ -5,10 +7,10 @@ import {
   SET_USER_LOCATION,
   SET_IS_USER_POSITION_LOCATED,
   SET_MAP_DELTA,
+  SET_LANGUAGE,
+  SET_NOTIFICATIONS,
 } from '../types';
-import { UserActions, LoginActions, LocationActions } from '../actions/actions';
-// import { ILoginState } from '../../interfaces/ILoginState';
-// import { IUserData } from '../../interfaces/IUserData';
+import { UserActions, LoginActions, LocationActions, SettingsActions } from '../actions/actions';
 
 export interface IUserData {
   _id: string;
@@ -36,6 +38,11 @@ export interface IAuthData {
   isNewUser: boolean;
 }
 
+export interface ISettings {
+  language: string;
+  notifications: boolean;
+}
+
 const initialUserState: IUserData = {
   _id: '',
   about_user: '',
@@ -60,6 +67,26 @@ const initialUserLocation: IUserLocation = {
 
 const initialAuthState: IAuthData = {
   isNewUser: false,
+};
+
+const initialSettings: ISettings = {
+  language: NativeModules.I18nManager.localeIdentifier,
+  notifications: false,
+};
+
+export const userSettingsReducer = (state = initialSettings, action: SettingsActions) => {
+  console.log(action.type);
+  switch (action.type) {
+    case SET_LANGUAGE:
+      console.log('LANGUAGEREDUCER', action.payload);
+      return { ...state, language: action.payload };
+    case SET_NOTIFICATIONS:
+      console.log('NOTIFICATIONREDUCER', action.payload);
+      return { ...state, notifications: action.payload };
+    default:
+      state;
+  }
+  return state;
 };
 
 export const userDataReducer = (state = initialUserState, action: UserActions): IUserData => {

@@ -119,12 +119,12 @@ export const HomeScreen: React.FC<IHomeScreen> = ({ navigation }) => {
     return (
       <View style={styles.screenWrapper}>
         <StatusBar
-        animated={true}
-        backgroundColor="transparent"
-        translucent={true}
-        hidden={false}
-        barStyle="dark-content"
-      />
+          animated={true}
+          backgroundColor="transparent"
+          translucent={true}
+          hidden={false}
+          barStyle="dark-content"
+        />
         <View style={styles.trackUserButtonContainer}>
           <TouchableOpacity onPress={() => setIsUserTracking(!isUserTracking)}>
             <MaterialCommunityIcons

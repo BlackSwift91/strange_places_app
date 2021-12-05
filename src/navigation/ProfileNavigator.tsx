@@ -9,7 +9,6 @@ import { UserProfileScreen } from '../screens/UserProfileScreen';
 import { ChangePasswordScreen } from '../screens/ChangePasswordScreen';
 import { ChangeProfileInfoScreen } from '../screens/ChangeProfileInfoScreen';
 
-
 const Stack = createStackNavigator();
 
 export const ProfileNavigator = () => {
@@ -41,6 +40,7 @@ export const ProfileNavigator = () => {
         name="Settings"
         component={SettingsScreen}
         options={{
+          headerTitle: t('settingsScreen.settings'),
           headerShown: true,
         }}
       />

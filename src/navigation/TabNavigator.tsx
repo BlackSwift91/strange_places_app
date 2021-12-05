@@ -143,6 +143,6 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     color: THEME.MAIN_COLOR,
     alignSelf: 'center',
-    marginHorizontal: 30,
+    marginHorizontal: 20,
   },
 });
