@@ -47,6 +47,7 @@ type ProfileNavigatorParamsList = {
     country?: string;
   };
   ChangePassword: undefined;
+  ChangeProfileInfo: undefined;
 };
 
 type ProfileParamsList = {
@@ -101,7 +102,6 @@ export interface IPlaceScreen {
   navigation: StackNavigationProp<HomeNavigatorParamsList, 'PlaceDetail'>;
   route: RouteProp<HomeNavigatorParamsList, 'PlaceDetail'>;
 }
-
 
 export interface IChangeLocationModal {
   navigation: StackNavigationProp<ProfileNavigatorParamsList, 'ChangeLocationModalScreen'>;
