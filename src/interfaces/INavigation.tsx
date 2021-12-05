@@ -30,13 +30,14 @@ type TabNavigatorParamsList = {
   HomeScreenNavigator: undefined;
   AddNewPlaceScreen: undefined;
   ProfileNavigator: undefined;
-  // ProfileNavigator: { screen: string; params: { post: IPostData } };
 };
 
 type ProfileNavigatorParamsList = {
   UserProfile: { params: { _id: string } } | undefined;
   Settings: undefined;
   PlaceDetail: { params: { post: IPostData } };
+  ChangePassword: undefined;
+  ChangeProfileInfo: undefined;
 };
 
 type ProfileParamsList = {
@@ -90,6 +91,10 @@ export interface IUserProfile {
 export interface IPlaceScreen {
   navigation: StackNavigationProp<HomeNavigatorParamsList, 'PlaceDetail'>;
   route: RouteProp<HomeNavigatorParamsList, 'PlaceDetail'>;
+}
+
+export interface ISettingsScreen {
+  navigation: StackNavigationProp<ProfileNavigatorParamsList, 'Settings'>;
 }
 
 // export interface IHomeScreen {

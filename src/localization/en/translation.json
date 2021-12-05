@@ -81,5 +81,14 @@
     "changePasswordButton": "Change password",
     "wrongPassword": "Wrong password",
     "changedPassword": "Password changed successfully"
+
+  "settingsScreen": {
+    "settings": "Settings",
+    "changePassword": "Change password",
+    "changeProfileData": "Change profile data",
+    "changeLanguage": "Change language",
+    "enableNotifications": "Enable notifications",
+    "logOut": "Logout"
+
   }
 }
