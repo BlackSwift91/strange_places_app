@@ -44,6 +44,10 @@ export type LoginActions =
   | { type: 'IS_NEW_USER'; payload: boolean }
   | { type: 'TEST'; payload: string };
 
+export type SettingsActions =
+  | { type: 'SET_LANGUAGE'; payload: string }
+  | { type: 'SET_NOTIFICATIONS'; payload: boolean };
+
 export function setAllUserData(
   user_id: string,
   _id: string,
@@ -69,6 +73,20 @@ export function setAllUserData(
       user_id,
       user_name,
     },
+  };
+}
+
+export function setLanguage(language: string): SettingsActions {
+  return {
+    type: 'SET_LANGUAGE',
+    payload: language,
+  };
+}
+
+export function setNotifications(notifications: boolean): SettingsActions {
+  return {
+    type: 'SET_NOTIFICATIONS',
+    payload: notifications,
   };
 }
 

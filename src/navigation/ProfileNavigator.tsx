@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { PlaceDetailScreen } from '../screens/PlaceDetailScreen';
 import { UserProfileScreen } from '../screens/UserProfileScreen';
 import { ChangePasswordScreen } from '../screens/ChangePasswordScreen';
+
 import { ChangeProfileScreen } from '../screens/ChangeProfileScreen';
 import { ChangeAboutUserInfoModal } from '../screens/ChangeAboutUserInfoModal';
 import { ChangeUserLocationModal } from '../screens/ChangeUserLocationModal';
@@ -42,6 +43,7 @@ export const ProfileNavigator = () => {
         name="Settings"
         component={SettingsScreen}
         options={{
+          headerTitle: t('settingsScreen.settings'),
           headerShown: true,
         }}
       />

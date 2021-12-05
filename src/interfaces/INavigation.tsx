@@ -30,13 +30,13 @@ type TabNavigatorParamsList = {
   HomeScreenNavigator: undefined;
   AddNewPlaceScreen: undefined;
   ProfileNavigator: undefined;
-  // ProfileNavigator: { screen: string; params: { post: IPostData } };
 };
 
 type ProfileNavigatorParamsList = {
   UserProfile: { params: { _id: string } } | undefined;
   Settings: undefined;
   PlaceDetail: { params: { post: IPostData } };
+
   AboutUserModalScreen: { textValue: string; textLabel: string; placeholder: string };
   ChangeLocationModalScreen: { city: string; country: string };
   ChangeProfile: {
@@ -46,6 +46,7 @@ type ProfileNavigatorParamsList = {
     city?: string;
     country?: string;
   };
+  ChangePassword: undefined;
 };
 
 type ProfileParamsList = {
@@ -101,6 +102,7 @@ export interface IPlaceScreen {
   route: RouteProp<HomeNavigatorParamsList, 'PlaceDetail'>;
 }
 
+
 export interface IChangeLocationModal {
   navigation: StackNavigationProp<ProfileNavigatorParamsList, 'ChangeLocationModalScreen'>;
   route: RouteProp<ProfileNavigatorParamsList, 'ChangeLocationModalScreen'>;
@@ -114,6 +116,9 @@ export interface IChangeAboutUserInfoModal {
 export interface IChangeProfileScreen {
   navigation: StackNavigationProp<ProfileNavigatorParamsList, 'ChangeProfile'>;
   route: RouteProp<ProfileNavigatorParamsList, 'ChangeProfile'>;
+
+export interface ISettingsScreen {
+  navigation: StackNavigationProp<ProfileNavigatorParamsList, 'Settings'>;
 }
 
 // export interface IHomeScreen {
