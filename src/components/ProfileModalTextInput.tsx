@@ -23,6 +23,7 @@ export const ProfileModalTextInput: React.FC<IProfileTextInputProps> = props => 
     <View style={styles.wrapper}>
       <Text style={styles.label}>{props.textLabel}</Text>
       <TextInput
+        multiline={true}
         showSoftInputOnFocus={false}
         placeholder={props.placeholder}
         placeholderTextColor={THEME.DARK_GRAY_COLOR}

@@ -7,7 +7,10 @@ import { useTranslation } from 'react-i18next';
 import { PlaceDetailScreen } from '../screens/PlaceDetailScreen';
 import { UserProfileScreen } from '../screens/UserProfileScreen';
 import { ChangePasswordScreen } from '../screens/ChangePasswordScreen';
-import { ChangeProfileInfoScreen } from '../screens/ChangeProfileInfoScreen';
+
+import { ChangeProfileScreen } from '../screens/ChangeProfileScreen';
+import { ChangeAboutUserInfoModal } from '../screens/ChangeAboutUserInfoModal';
+import { ChangeUserLocationModal } from '../screens/ChangeUserLocationModal';
 
 const Stack = createStackNavigator();
 
@@ -52,11 +55,27 @@ export const ProfileNavigator = () => {
         }}
       />
       <Stack.Screen
-        name="ChangeProfileInfo"
-        component={ChangeProfileInfoScreen}
+        name="ChangeProfile"
+        component={ChangeProfileScreen}
         options={{
           headerShown: true,
         }}
+      />
+      <Stack.Screen
+        name="AboutUserModalScreen"
+        component={ChangeAboutUserInfoModal}
+        options={() => ({
+          presentation: 'modal',
+          title: 'Test',
+        })}
+      />
+      <Stack.Screen
+        name="ChangeLocationModalScreen"
+        component={ChangeUserLocationModal}
+        options={() => ({
+          presentation: 'modal',
+          title: 'Test',
+        })}
       />
     </Stack.Navigator>
   );

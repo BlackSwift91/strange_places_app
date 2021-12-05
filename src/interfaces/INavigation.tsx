@@ -36,8 +36,17 @@ type ProfileNavigatorParamsList = {
   UserProfile: { params: { _id: string } } | undefined;
   Settings: undefined;
   PlaceDetail: { params: { post: IPostData } };
+
+  AboutUserModalScreen: { textValue: string; textLabel: string; placeholder: string };
+  ChangeLocationModalScreen: { city: string; country: string };
+  ChangeProfile: {
+    textInput?: string;
+    user_name?: string;
+    user_id?: string;
+    city?: string;
+    country?: string;
+  };
   ChangePassword: undefined;
-  ChangeProfileInfo: undefined;
 };
 
 type ProfileParamsList = {
@@ -92,6 +101,21 @@ export interface IPlaceScreen {
   navigation: StackNavigationProp<HomeNavigatorParamsList, 'PlaceDetail'>;
   route: RouteProp<HomeNavigatorParamsList, 'PlaceDetail'>;
 }
+
+
+export interface IChangeLocationModal {
+  navigation: StackNavigationProp<ProfileNavigatorParamsList, 'ChangeLocationModalScreen'>;
+  route: RouteProp<ProfileNavigatorParamsList, 'ChangeLocationModalScreen'>;
+}
+
+export interface IChangeAboutUserInfoModal {
+  navigation: StackNavigationProp<ProfileNavigatorParamsList, 'AboutUserModalScreen'>;
+  route: RouteProp<ProfileNavigatorParamsList, 'AboutUserModalScreen'>;
+}
+
+export interface IChangeProfileScreen {
+  navigation: StackNavigationProp<ProfileNavigatorParamsList, 'ChangeProfile'>;
+  route: RouteProp<ProfileNavigatorParamsList, 'ChangeProfile'>;
 
 export interface ISettingsScreen {
   navigation: StackNavigationProp<ProfileNavigatorParamsList, 'Settings'>;
