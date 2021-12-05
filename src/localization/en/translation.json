@@ -86,7 +86,6 @@
     "wrongPassword": "Wrong password",
     "changedPassword": "Password changed successfully"
   },
-
   "changeProfileScreen": {
     "changeAvatar": "Change your avatar",
     "userFirstName": "First Name",
