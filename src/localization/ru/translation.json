@@ -1,57 +1,58 @@
 {
   "_comment": "src/localization/en/translation.json",
   "startScreen": {
-    "appGreeting": "Welcome to Strange Places",
-    "appDescription": "Travel, discover and share amazing places around you",
-    "signInButton": "Sign In",
-    "signUpButton": "Sign Up",
-    "restorePasswordButton": "Restore password"
+    "appGreeting": "Приветствуем в Strange Places",
+    "appDescription": "Путешествуй, открывай и делись невероятными местами вокруг",
+    "signInButton": "Войти",
+    "signUpButton": "Зарегестрироваться",
+    "restorePasswordButton": "Восстановить пароль"
   },
   "signInScreen": {
-    "signIn": "Sign In",
-    "signUp": "Sign Up",
-    "restorePassword": "Restore password",
-    "alertInvalidEmail": "This email address is invalid!",
-    "alertWrongPassword": "Wrong Password!",
-    "alertUserNotFound": "No such user with this email!",
-    "alertInputEmail": "Please input youl email",
-    "alertPasswordLength": "The password must be at least six symbols",
-    "textInputPassword": "Password",
-    "textInputUserEmail": "User Email"
+    "signIn": "Войти",
+    "signUp": "Зарегестрироваться",
+    "restorePassword": "Восстановить пароль",
+    "alertInvalidEmail": "Неправильный электоррный адрес!",
+    "alertWrongPassword": "Неправильный пароль!",
+    "alertUserNotFound": "Пользователя не существует",
+    "alertInputEmail": "Введите пароль",
+    "alertPasswordLength": "Пароль должен состоять минимум из шести символов",
+    "textInputPassword": "Пароль",
+    "textInputUserEmail": "Почтовый адрес"
   },
   "signUpScreen": {
-    "signIn": "Sign In",
-    "signUp": "Sign Up",
-    "restorePassword": "Restore password",
-    "alertEmailInUse": "This email address is already in use!",
-    "alertInvalidEmail": "This email address is invalid!",
-    "alertUserNotFound": "No such user with this email!",
-    "alertInputEmail": "Please input youl email",
-    "alertPasswordLength": "The password must be at least six symbols",
-    "alertInputEmailEqual": "Passwords must be equal",
-    "textInputPassword": "Password",
-    "textInputPasswordRepeat": "Repeat Password",
-    "textInputUserEmail": "User Email"
+    "signIn": "Войти",
+    "signUp": "Зарегестрироваться",
+    "restorePassword": "Восстановить пароль",
+    "alertEmailInUse": "Пользователь с такой почтой уже зарегестрирован!",
+    "alertInvalidEmail": "Неверный электоррный адрес!",
+    "alertInputEmail": "Введите пароль",
+    "alertPasswordLength": "Пароль должен состоять минимум из шести символов",
+    "alertInputEmailEqual": "Пароли должны быть одинаковыми",
+    "textInputPassword": "Пароль",
+    "textInputPasswordRepeat": "Повторите пароль",
+    "textInputUserEmail": "Почтовый адрес"
   },
   "imageSourceModal": {
-    "makeNewPhoto": "Make a new photo",
-    "selectFromLibrary": "Select from library"
+    "makeNewPhoto": "Сделать новое фото",
+    "selectFromLibrary": "Выбрать из галереи"
+  },
+  "setLocationModal": {
+    "city": "Город",
+    "country": "Страна"
   },
   "signUpProfileScreen": {
-    "changeAvatar": "Change your avatar",
-    "userFirstName": "First Name",
-    "userLastName": "Last Name",
-    "userAboutInfo": "About Info",
-    "userLocation": "Your location",
-    "confirmButton": "Confirm"
+    "changeAvatar": "Изменить аватар",
+    "userFirstName": "Имя",
+    "userLastName": "Фамилия",
+    "userAboutInfo": "О себе",
+    "userLocation": "Геолокация",
+    "confirmButton": "Подтвердить"
   },
   "addNewPostScreen": {
-    "postTitleLabel": "Add Title",
-    "postTitlePlaceholder": "Add your post title",
-    "postDescriptionLabel": "Add description",
-    "postDescriptionPlaceholder": "Add description",
-    "postLocation": "Add Location",
-    "submitButton": "Add Post"
+    "postDescriptionLabel": "Добавить описание",
+    "postDescriptionPlaceholder": "Добавить описание",
+    "postLocation": "Добавить геолокацию",
+    "submitButton": "Добавить публикацию"
   },
   "tabNavigator": {
     "homeButton": "Главная",
@@ -59,13 +60,48 @@
   },
   "homeNavigator": {
     "homeScreen": "Главная",
-    "placeDetailScreen": "Place Details"
+    "placeDetailScreen": "Описание места"
   },
   "profileScreen": {
-    "posts": "Posts",
-    "subscriptions": "Subscriptions",
-    "subscribers": "Subscribers",
-    "subscribe": "subscribe",
-    "unsubscribe": "unsubscribe"
+    "posts": "Публикации",
+    "subscriptions": "Подписки",
+    "subscribers": "Подписчики",
+    "subscribe": "подписаться",
+    "unsubscribe": "отписаться"
+  },
+  "changePasswordScreen": {
+    "changePassword": "Изменить пароль",
+    "alertInputEmail": "Введите пароль",
+    "alertPasswordLength": "Пароль должен состоять минимум из шести символов",
+    "alertInputEmailEqual": "Пароли должны быть одинаковыми",
+    "currentPasswordLabel": "Введите пароль",
+    "currentPasswordPlaceholder": "Введите пароль",
+    "newPasswordLabel": "Введите новый пароль",
+    "newPasswordPlaceholder": "Новый пароль",
+    "repeatPasswordPlaceholder": "Повторите пароль",
+    "changePasswordButton": "Изменить пароль",
+    "wrongPassword": "Неправильный пароль",
+    "changedPassword": "Пароль успешно изменен"
+  },
+  "changeProfileScreen": {
+    "changeAvatar": "Изменить аватар",
+    "userFirstName": "Имя",
+    "userLastName": "Фамилия",
+    "userAboutInfo": "О себе",
+    "userLocation": "Геолокация",
+    "confirmButton": "Подтеврдить"
+  },
+  "changeLocationModal": {
+    "city": "Город",
+    "country": "Страна" 
+  },
+  "settingsScreen": {
+    "settings": "Настройки",
+    "changePassword": "Изменить пароль",
+    "changeProfileData": "Редактировать профиль",
+    "changeLanguage": "Изменить язык",
+    "enableNotifications": "Включить уведомления",
+    "logOut": "Выйти",
+    "country": "Страна"
   }
 }

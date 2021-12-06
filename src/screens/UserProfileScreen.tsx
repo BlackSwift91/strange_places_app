@@ -381,7 +381,7 @@ const styles = StyleSheet.create({
 
 const subscribeButtonStyle = StyleSheet.create<ICustomButtonStyle>({
   buttonContainerStyle: {
-    width: 120,
+    width: 150,
 
     marginTop: 20,
   },
