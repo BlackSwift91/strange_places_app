@@ -71,7 +71,7 @@ const initialAuthState: IAuthData = {
 
 const initialSettings: ISettings = {
   language: NativeModules.I18nManager.localeIdentifier,
-  notifications: false,
+  notifications: true,
 };
 
 export const userSettingsReducer = (state = initialSettings, action: SettingsActions) => {

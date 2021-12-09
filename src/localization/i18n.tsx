@@ -7,8 +7,6 @@ import { initReactI18next } from 'react-i18next';
 import translationEN from './en/translation.json';
 import translationRU from './ru/translation.json';
 
-console.log('LNG', store.getState().userSettingsReducer.language);
-
 const resources = {
   en_US: {
     translation: translationEN,

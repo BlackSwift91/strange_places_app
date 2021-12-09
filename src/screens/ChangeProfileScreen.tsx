@@ -4,20 +4,18 @@ import firestore from '@react-native-firebase/firestore';
 
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
-import { THEME } from '../theme';
-import { IChangeProfileScreen } from '../interfaces/INavigation';
-
-import { setAllUserData } from '../store/actions/actions';
-import { requestCameraPermission } from '../AndroidPermissions';
-import { pickSingleFromGallery, pickSingleWithCamera } from '../ImagePicker';
 import { useTranslation } from 'react-i18next';
+import { requestCameraPermission } from '../AndroidPermissions';
 
-import { CustomButton } from '../components/CustomButton';
-import { ProfileTextInput } from '../components/ProfileTextInput';
-import { ProfileModalTextInput } from '../components/ProfileModalTextInput';
-import { ImageSourceModal } from '../components/ImageSourceModal';
-
+import { THEME } from '../theme';
 import { IRootState } from '../store/index';
+import { CustomButton } from '../components/CustomButton';
+import { setAllUserData } from '../store/actions/actions';
+import { ProfileTextInput } from '../components/ProfileTextInput';
+import { ImageSourceModal } from '../components/ImageSourceModal';
+import { IChangeProfileScreen } from '../interfaces/INavigation';
+import { ProfileModalTextInput } from '../components/ProfileModalTextInput';
+import { pickSingleFromGallery, pickSingleWithCamera } from '../ImagePicker';
 
 export const ChangeProfileScreen: React.FC<IChangeProfileScreen> = ({ navigation, route }) => {
   const userData = useSelector((state: IRootState) => state.userDataReducer);

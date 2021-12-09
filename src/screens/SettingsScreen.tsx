@@ -43,7 +43,7 @@ export const SettingsScreen: React.FC<ISettingsScreen> = ({ navigation }) => {
   };
 
   const changeProfileData = () => {
-    navigation.navigate('ChangeProfileInfo');
+    navigation.navigate('ChangeProfile');
   };
 
   const enableNotifications = () => {
