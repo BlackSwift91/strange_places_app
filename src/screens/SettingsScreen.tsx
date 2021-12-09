@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
 
 const settingsButtonStyle = StyleSheet.create({
   buttonContainerStyle: {
-    width: 160,
+    width: 200,
     textAlign: 'left',
     marginLeft: 10,
   },

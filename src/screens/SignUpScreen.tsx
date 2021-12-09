@@ -346,7 +346,7 @@ const signUpButtonStyle = StyleSheet.create<ICustomButtonStyle>({
 const signInButtonStyle = StyleSheet.create<ICustomButtonStyle>({
   buttonContainerStyle: {
     paddingTop: 12,
-    width: 150,
+    width: 200,
   },
   buttonStyle: {
     textAlign: 'center',
@@ -396,7 +396,7 @@ const textInputStyle = StyleSheet.create<ItextInputStyle>({
 const restorePasswordButtonStyle = StyleSheet.create<ICustomButtonStyle>({
   buttonContainerStyle: {
     paddingTop: 15,
-    width: 150,
+    width: 200,
   },
   buttonStyle: {
     textAlign: 'center',
