@@ -56,7 +56,8 @@
   },
   "tabNavigator": {
     "homeButton": "Главная",
-    "profileButton": "Профиль"
+    "profileButton": "Профиль",
+    "addNewPlaceScreen": "Добавить место"
   },
   "homeNavigator": {
     "homeScreen": "Главная",

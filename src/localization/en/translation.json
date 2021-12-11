@@ -59,7 +59,8 @@
   },
   "tabNavigator": {
     "homeButton": "Home",
-    "profileButton": "Profile"
+    "profileButton": "Profile",
+    "addNewPlaceScreen": "Add new place"
   },
   "homeNavigator": {
     "homeScreen": "Home",
