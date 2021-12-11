@@ -109,6 +109,7 @@ export const TabNavigator = () => {
         component={AddNewPlaceScreen}
         options={{
           headerShown: true,
+          headerTitle: t('tabNavigator.addNewPlaceScreen'),
           tabBarIcon: () => <AddPostTabBarButton />,
           headerTintColor: THEME.MAIN_COLOR,
         }}
