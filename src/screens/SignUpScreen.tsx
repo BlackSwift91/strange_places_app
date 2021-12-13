@@ -138,11 +138,11 @@ export const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
           changeErrorDescription('');
         } else {
           setPasswordError(true);
-          changeErrorDescription('');
+          changeErrorDescription(t('signUpScreen.alertInputEmailEqual'));
         }
       } else {
         setPasswordError(false);
-        changeErrorDescription(t('signUpScreen.alertInputEmailEqual'));
+        changeErrorDescription('');
       }
     }
   };

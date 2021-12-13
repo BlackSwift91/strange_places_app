@@ -10,6 +10,7 @@
   "signInScreen": {
     "signIn": "Sign In",
     "signUp": "Sign Up",
+    "invalidEmail": "Invalid Email",
     "restorePassword": "Restore password",
     "alertInvalidEmail": "This email address is invalid!",
     "alertWrongPassword": "Wrong Password!",

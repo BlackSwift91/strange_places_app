@@ -16,6 +16,7 @@ import { ImageSourceModal } from '../components/ImageSourceModal';
 import { IChangeProfileScreen } from '../interfaces/INavigation';
 import { ProfileModalTextInput } from '../components/ProfileModalTextInput';
 import { pickSingleFromGallery, pickSingleWithCamera } from '../ImagePicker';
+import { ScrollView } from 'react-native-gesture-handler';
 
 export const ChangeProfileScreen: React.FC<IChangeProfileScreen> = ({ navigation, route }) => {
   const userData = useSelector((state: IRootState) => state.userDataReducer);
@@ -32,6 +33,9 @@ export const ChangeProfileScreen: React.FC<IChangeProfileScreen> = ({ navigation
   const dispatch = useDispatch();
   const userLocationTextValue = setTextInputUserLocationValue();
   const { t } = useTranslation();
+
+  console.log(userData.first_name);
+  
 
   useEffect(() => {
     if (route?.params?.city) {
@@ -153,7 +157,7 @@ export const ChangeProfileScreen: React.FC<IChangeProfileScreen> = ({ navigation
   }
 
   return (
-    <View style={styles.screenContainer}>
+    <ScrollView style={styles.screenContainer}>
       <StatusBar
         animated={true}
         backgroundColor="transparent"
@@ -193,6 +197,7 @@ export const ChangeProfileScreen: React.FC<IChangeProfileScreen> = ({ navigation
             textLabel={t('changeProfileScreen.userFirstName')}
             placeholder={t('changeProfileScreen.userFirstName')}
             onChangeTextHandler={changeUserFirstName}
+            value={userFirstName}
           />
         </View>
         <View style={styles.textInputWrapper}>
@@ -200,6 +205,7 @@ export const ChangeProfileScreen: React.FC<IChangeProfileScreen> = ({ navigation
             textLabel={t('changeProfileScreen.userLastName')}
             placeholder={t('changeProfileScreen.userLastName')}
             onChangeTextHandler={changeUserLastName}
+            value={userLastName}
           />
         </View>
 
@@ -230,7 +236,7 @@ export const ChangeProfileScreen: React.FC<IChangeProfileScreen> = ({ navigation
           />
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -275,6 +281,7 @@ const confirmButtonStyle = StyleSheet.create({
   buttonContainerStyle: {
     width: '90%',
     marginTop: 40,
+    marginBottom: 80,
   },
   buttonStyle: {
     backgroundColor: THEME.MAIN_COLOR,
